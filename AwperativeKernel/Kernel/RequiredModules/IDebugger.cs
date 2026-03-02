@@ -17,13 +17,13 @@ public interface IDebugger
     public void Stop();
 
     public void LogAction(string __message);
-    public void LogAction(string __message, IReadOnlyList<string> __values, IReadOnlyList<string> __args);
+    public void LogAction(string __message, IEnumerable<string> __values, IEnumerable<string> __args);
     
     public void LogWarning(string __message);
-    public void LogWarning(string __message, IReadOnlyList<string> __values, IReadOnlyList<string> __args);
+    public void LogWarning(string __message, IEnumerable<string> __values, IEnumerable<string> __args);
     
     public void LogError(string __message);
-    public void LogError(string __message, IReadOnlyList<string> __values, IReadOnlyList<string> __args);
+    public void LogError(string __message, IEnumerable<string> __values, IEnumerable<string> __args);
 
     
     

@@ -7,5 +7,5 @@ namespace AwperativeKernel;
 
 public interface IModuleManager
 {
-    public IReadOnlyList<Assembly> GetDependencies();
+    public IEnumerable<Assembly> GetDependencies();
 }

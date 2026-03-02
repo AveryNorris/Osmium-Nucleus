@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 
 namespace AwperativeKernel;
@@ -30,6 +29,7 @@ public static class DebugAttributes
         /// <summary> Returns true or false based on the given condition from the attribute, unless Debug.IgnoreErrors is true, in which it will always return true, but still try to throw errors. </summary>
         /// <usage> It is required to use VerifyOrThrow() to validate important conditions for methods within the kernel. You may also feel free to use this outside in any modules or games.
         /// It is easiest to use VerifyOrThrow like : (In your method) if(!Attribute.VerifyOrThrow()) return; That way the attribute can exit the code if the condition is false.</usage>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
         public static bool VerifyOrThrow(ComponentDocker __docker, Component __component) {
             if (__docker.Contains(__component)) return true;
 
@@ -56,6 +56,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
         public static bool VerifyOrThrow(ComponentDocker __docker, Component __component) {
             if (!__docker.Contains(__component)) return true;
 
@@ -82,6 +83,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
         public static bool VerifyOrThrow(Component __component) {
             if (__component.ComponentDocker == null) return true;
 
@@ -108,6 +110,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
         public static bool VerifyOrThrow(ComponentDocker __docker, ComponentDocker __other) {
             if (!__docker.Equals(__other)) return true;
 
@@ -130,6 +133,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
         public static bool VerifyOrThrow(Component __component) {
             if (__component != null) return true;
 
@@ -148,6 +152,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
         public static bool VerifyOrThrow(ComponentDocker __componentDocker) {
             if (__componentDocker != null) return true;
 
@@ -166,6 +171,7 @@ public static class DebugAttributes
 
 
         /// <inheritdoc cref="DockerOwns.VerifyOrThrow"/>
+        [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
         public static bool VerifyOrThrow(Scene __scene) {
             if (__scene != null) return true;
 

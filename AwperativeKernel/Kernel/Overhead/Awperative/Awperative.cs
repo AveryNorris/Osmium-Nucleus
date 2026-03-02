@@ -27,16 +27,16 @@ public static partial class Awperative
     /// <summary>
     /// Bottom class of Awperative. Contains the OpenTK Instance.
     /// </summary>
-    [NotNull, UnsafeInternal] private static Base Base;
+    [DebugAttributes.NotNull, MarkerAttributes.UnsafeInternal] private static Base Base;
 
     
     
     /// <summary>
     /// List of all scenes currently loaded in the kernel. 
     /// </summary>
-    [CalculatedProperty, CalculatedPropertyExpense("Very Low")]
-    public static IReadOnlyList<Scene> Scenes => [.._scenes];
-    [UnsafeInternal] internal static HashSet<Scene> _scenes { get; private set; } = [];
+    [MarkerAttributes.CalculatedProperty]
+    public static IEnumerable<Scene> Scenes => [.._scenes];
+    [MarkerAttributes.UnsafeInternal] internal static HashSet<Scene> _scenes { get; private set; } = [];
 
 
     
@@ -68,7 +68,7 @@ public static partial class Awperative
     public static void AddScene(Scene __scene) {
         if (!ContainsScene(__scene.Name)) {
             _scenes.Add(__scene);
-        } else Debug.LogError("Awperative already has a Scene with that name!", ["Scene", "Name"], [GetScene(__scene.Name).GetHashCode().ToString(), __scene.Name]); return null;
+        } else Debug.LogError("Awperative already has a Scene with that name!", ["Scene", "Name"], [GetScene(__scene.Name).GetHashCode().ToString(), __scene.Name]); return;
     }
     
     
