@@ -17,14 +17,6 @@ public abstract partial class ComponentDocker
         if(!DebugAttributes.DockerNotNull.VerifyOrThrow(__componentDocker)) return;
         if(!DebugAttributes.DifferentDocker.VerifyOrThrow(this, __componentDocker)) return;
         
-        if (!Contains(__component)) {
-            Debug.LogError("Docker does not have ownership over Component!", ["ComponentType"], [__component.GetType().Name]); return;
-        }
-
-        if (__componentDocker == this) {
-            Debug.LogError("Docker already has Component!", ["ComponentType"], [__component.GetType().Name]); return;
-        }
-        
         RemoveComponentFromLists(__component);
         __componentDocker.AddComponentToLists(__component);
         
@@ -46,51 +38,51 @@ public abstract partial class ComponentDocker
 
     /// <summary> Moves the first component with a given Type</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void Move<__Type>(ComponentDocker __componentDocker) where __Type : Component => Move(Get<__Type>(), __componentDocker);
+    public void Move<__Type>([DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) where __Type : Component => Move(Get<__Type>(), __componentDocker);
 
 
 
     /// <summary> Moves all components of a given type</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void MoveAll<__Type>(ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>(), __componentDocker);
+    public void MoveAll<__Type>([DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>(), __componentDocker);
 
 
 
     /// <summary> Moves all components that have all the given tags</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void MoveAll(IEnumerable<string> __tags, ComponentDocker __componentDocker) => MoveAll(GetAll(__tags), __componentDocker);
+    public void MoveAll([DebugAttributes.EnumeratorNotNull] IEnumerable<string> __tags, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) => MoveAll(GetAll(__tags), __componentDocker);
     
 
 
 
     /// <summary> Moves all Components that have the given type, and all the given tags</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void MoveAll<__Type>(IEnumerable<string> __tags, ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>(__tags), __componentDocker);
+    public void MoveAll<__Type>([DebugAttributes.EnumeratorNotNull] IEnumerable<string> __tags, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>(__tags), __componentDocker);
     
     
     
     
     /// <summary> Moves all the components with the given tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void MoveAll(string __tag, ComponentDocker __componentDocker) => MoveAll(GetAll([__tag]), __componentDocker);
+    public void MoveAll([DebugAttributes.NotNull] string __tag, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) => MoveAll(GetAll([__tag]), __componentDocker);
     
     
     
     /// <summary> Moves all the components that have a certain type, and a certain tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void MoveAll<__Type>(string __tag, ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>([__tag]), __componentDocker);
+    public void MoveAll<__Type>([DebugAttributes.NotNull] string __tag, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) where __Type : Component => MoveAll(GetAll<__Type>([__tag]), __componentDocker);
     
     
 
     /// <summary> Moves the first component with the given tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void Move(string __tag, ComponentDocker __componentDocker) => Move(GetAll([__tag]).FirstOrDefault(), __componentDocker);
+    public void Move([DebugAttributes.NotNull] string __tag, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) => Move(GetAll([__tag]).FirstOrDefault(), __componentDocker);
 
 
     
     /// <summary> Moves the moves component with the given type and tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void Move<__Type>(string __tag, ComponentDocker __componentDocker) where __Type : Component => Move(GetAll<__Type>(__tag).FirstOrDefault(), __componentDocker);
+    public void Move<__Type>([DebugAttributes.NotNull] string __tag, [DebugAttributes.DockerNotNull, DebugAttributes.DifferentDocker] ComponentDocker __componentDocker) where __Type : Component => Move(GetAll<__Type>(__tag).FirstOrDefault(), __componentDocker);
     
     
 }

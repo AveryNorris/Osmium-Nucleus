@@ -17,25 +17,19 @@ public static partial class Awperative
 {
 
     
-    /// <summary>
-    /// Current Version of Awperative
-    /// </summary>
+    /// <summary> Current Version of Awperative </summary>
     public static string Version = "1.2C";
 
 
 
-    /// <summary>
-    /// Bottom class of Awperative. Contains the OpenTK Instance.
-    /// </summary>
+    /// <summary> Bottom class of Awperative. Contains the OpenTK Instance. </summary>
     [DebugAttributes.NotNull, MarkerAttributes.UnsafeInternal] private static Base Base;
 
     
     
-    /// <summary>
-    /// List of all scenes currently loaded in the kernel. 
-    /// </summary>
+    /// <summary> List of all scenes currently loaded in the kernel. </summary>
     [MarkerAttributes.CalculatedProperty]
-    public static IEnumerable<Scene> Scenes => [.._scenes];
+    public static IReadOnlySet<Scene> Scenes => _scenes;
     [MarkerAttributes.UnsafeInternal] internal static HashSet<Scene> _scenes { get; private set; } = [];
 
 
@@ -47,14 +41,17 @@ public static partial class Awperative
     
     
     
-    /// <summary> Awperative's debugger of choice</summary>
+    /// <summary> Awperative's debugger of choice, found from the module manager.</summary>
+    [MarkerAttributes.UnsafeInternal]
     public static IDebugger Debug { get; set; }
-    public static IModuleManager ModuleManager { get; set; }
+    /// <summary> Awperative's module manager of choice, sent in through the Start() function</summary>
+    [MarkerAttributes.UnsafeInternal]
+    public static IModuleManager ModuleManager { get; private set; }
 
+    
 
-    /// <summary>
-    /// Creates a new Scene
-    /// </summary>
+    /// <summary> Creates a new Scene with the given name </summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static Scene CreateScene(string __name) {
         if (!ContainsScene(__name)) {
             Scene newScene = new Scene(__name);
@@ -65,6 +62,7 @@ public static partial class Awperative
     
     
     
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static void AddScene(Scene __scene) {
         if (!ContainsScene(__scene.Name)) {
             _scenes.Add(__scene);
@@ -73,46 +71,33 @@ public static partial class Awperative
     
     
 
-    /// <summary>
-    /// Finds a Scene from a given name
-    /// </summary>
-    /// <param name="__name"> Name to search for</param>
-    /// <returns></returns>
+    /// <summary> Finds a Scene from a given name </summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static Scene GetScene(string __name) => _scenes.FirstOrDefault(scene => scene.Name == __name, null);
     
     
     
-    /// <summary>
-    /// Returns bool based on whether there a scene with the given name or not.
-    /// </summary>
-    /// <param name="__name"> Name of the Scene</param>
-    /// <returns></returns>
+    /// <summary> Returns bool based on whether there a scene with the given name or not. </summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static bool ContainsScene(string __name) => _scenes.Any(scene => scene.Name == __name);
 
 
 
-    /// <summary>
-    /// Closes a Scene
-    /// </summary>
-    /// <param name="__scene"> Scene to close</param>
+    /// <summary> Closes a Scene </summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void CloseScene(Scene __scene) => _scenes.Remove(__scene);
     
     
     
-    /// <summary>
-    /// Closes a Scene
-    /// </summary>
-    /// <param name="__name"> Name of the scene</param>
+    /// <summary> Closes a Scene </summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void CloseScene(string __name) => _scenes.Remove(GetScene(__name));
 
 
 
 
 
-    /// <summary>
-    /// Gets Awperative ready to begin! Compiles Component functions etc. Please call before doing anything Awperative
-    /// related!
-    /// </summary>
+    /// <summary> Gets Awperative ready to begin! Compiles Component functions etc. Please call before doing anything Awperative related! </summary>
     public static void Start(string moduleManagerPath) {
         if (IsStarted) return;
         IsStarted = true;

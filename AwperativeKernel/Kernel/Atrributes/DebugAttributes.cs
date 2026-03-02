@@ -33,7 +33,7 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(ComponentDocker __docker, Component __component) {
             if (__docker.Contains(__component)) return true;
 
-            Debug.LogError("Docker does not own the Component!",
+            Awperative.Debug.LogError("Docker does not own the Component!",
                 ["ComponentType", "ComponentName", "ComponentHash", "DockerType", "DockerName", "DockerHash"], [
                     __component.GetType().Name,
                     __component.Name,
@@ -43,7 +43,7 @@ public static class DebugAttributes
                     __docker.GetHashCode().ToString("N0")
                 ]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -60,7 +60,7 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(ComponentDocker __docker, Component __component) {
             if (!__docker.Contains(__component)) return true;
 
-            Debug.LogError("Docker owns the Component!",
+            Awperative.Debug.LogError("Docker owns the Component!",
                 ["ComponentType", "ComponentName", "ComponentHash", "DockerType", "DockerName", "DockerHash"], [
                     __component.GetType().Name,
                     __component.Name,
@@ -70,7 +70,7 @@ public static class DebugAttributes
                     __docker.GetHashCode().ToString("N0")
                 ]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -87,7 +87,7 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(Component __component) {
             if (__component.ComponentDocker == null) return true;
 
-            Debug.LogError("Component is already owned!",
+            Awperative.Debug.LogError("Component is already owned!",
                 ["ComponentType", "ComponentName", "ComponentHash", "DockerType", "DockerName", "DockerHash"], [
                     __component.GetType().Name,
                     __component.Name,
@@ -97,7 +97,7 @@ public static class DebugAttributes
                     __component.ComponentDocker.GetHashCode().ToString("N0")
                 ]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
     
@@ -114,13 +114,13 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(ComponentDocker __docker, ComponentDocker __other) {
             if (!__docker.Equals(__other)) return true;
 
-            Debug.LogError("The dockers are the same!", ["DockerType", "DockerName", "DockerHash"], [
+            Awperative.Debug.LogError("The dockers are the same!", ["DockerType", "DockerName", "DockerHash"], [
                 __docker.GetType().Name,
                 __docker switch { Scene scene => scene.Name, Component component => component.Name, _ => "unknown" },
                 __docker.GetHashCode().ToString("N0")
             ]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -137,9 +137,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(Component __component) {
             if (__component != null) return true;
 
-            Debug.LogError("Component is null!");
+            Awperative.Debug.LogError("Component is null!");
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -156,9 +156,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(ComponentDocker __componentDocker) {
             if (__componentDocker != null) return true;
 
-            Debug.LogError("Docker is null!");
+            Awperative.Debug.LogError("Docker is null!");
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -175,9 +175,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(Scene __scene) {
             if (__scene != null) return true;
 
-            Debug.LogError("Scene is null!");
+            Awperative.Debug.LogError("Scene is null!");
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
     
@@ -195,8 +195,8 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(ICollection<object> __collection) {
             foreach (object obj in __collection) {
                 if (obj == null) {
-                    Debug.LogError("A given enumerator has null members!", ["Type"], [__collection.GetType().Name]);
-                    return Debug.IgnoreErrors;
+                    Awperative.Debug.LogError("A given enumerator has null members!", ["Type"], [__collection.GetType().Name]);
+                    return Awperative.Debug.IgnoreErrors;
                 }
             }
 
@@ -216,8 +216,8 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(IEnumerable<object> __enumerator) {
             foreach (object obj in __enumerator) {
                 if (obj == null) {
-                    Debug.LogError("A given enumerator has null members!", ["Type"], [__enumerator.GetType().Name]);
-                    return Debug.IgnoreErrors;
+                    Awperative.Debug.LogError("A given enumerator has null members!", ["Type"], [__enumerator.GetType().Name]);
+                    return Awperative.Debug.IgnoreErrors;
                 }
             }
 
@@ -237,9 +237,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(Object __object) {
             if (__object != null) return true;
 
-            Debug.LogError("A given object is null!");
+            Awperative.Debug.LogError("A given object is null!");
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -255,9 +255,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow(int __index, int __min, int __max) {
             if (__index >= __min && __index <= __max) return true;
 
-            Debug.LogError("Value does not fit range!", ["Index"], [__index.ToString("N0")]);
+            Awperative.Debug.LogError("Value does not fit range!", ["Index"], [__index.ToString("N0")]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -273,9 +273,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow<__Type>(__Type __object, ICollection<__Type> __collection) {
             if (__collection.Contains(__object)) return true;
 
-            Debug.LogError("Collection does not contain object!", ["ObjectType"], [__object.GetType().Name]);
+            Awperative.Debug.LogError("Collection does not contain object!", ["ObjectType"], [__object.GetType().Name]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
 
@@ -291,9 +291,9 @@ public static class DebugAttributes
         public static bool VerifyOrThrow<__Type>(__Type __object, ICollection<__Type> __collection) {
             if (!__collection.Contains(__object)) return true;
 
-            Debug.LogError("Collection already contains object!", ["ObjectType"], [__object.GetType().Name]);
+            Awperative.Debug.LogError("Collection already contains object!", ["ObjectType"], [__object.GetType().Name]);
 
-            return Debug.IgnoreErrors;
+            return Awperative.Debug.IgnoreErrors;
         }
     }
     
