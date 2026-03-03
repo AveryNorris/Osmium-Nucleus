@@ -4,7 +4,7 @@ using System.Reflection;
 using AwperativeKernel;
 
 
-namespace Awperative.Kernel.Overhead.Reflection;
+namespace AwperativeKernel;
 
 
 /// <summary>

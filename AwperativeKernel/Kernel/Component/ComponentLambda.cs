@@ -35,6 +35,10 @@ public abstract partial class Component
 
     /// <summary> Makes the Component destroy itself </summary>
     [MarkerAttributes.MethodPointer]
-    public void Destroy() => ComponentDocker.Destroy(this);
+    public void DestroySelf() => ComponentDocker.Destroy(this);
 
+
+
+    /// <inheritdoc cref="Awperative.Base"/>
+    public Base AwperativeBase => Awperative.Base;
 }

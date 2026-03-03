@@ -7,7 +7,7 @@ using System.Reflection;
 using AwperativeKernel;
 
 
-namespace Awperative.Kernel.Overhead.Reflection;
+namespace AwperativeKernel;
 
 
 /// <summary>
@@ -22,7 +22,10 @@ internal static class EventManager
     
     
     /// <summary> All types of time based events in Awperative.</summary>
-    internal static readonly ImmutableArray<string> Events = ["Load", "Unload", "Update", "Draw", "Create", "Remove"];
+    internal static readonly ImmutableArray<string> Events = [
+        "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL AWPERATIVE RELATED EVENTS
+        
+    ];
     
     
     /// <summary> Compiles a single type, and stores its events in the dictionary.</summary>

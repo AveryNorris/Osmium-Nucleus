@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using OpenTK;
+using OpenTK.Graphics.OpenGL.Compatibility;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
@@ -49,4 +52,7 @@ public sealed class Base() : GameWindow(GameWindowSettings.Default, new NativeWi
     /// </summary>
     /// <remarks> Hooks are unable to receive both Update() and Draw()</remarks>
     protected override void OnRenderFrame(FrameEventArgs __args) { foreach(Scene scene in Awperative._scenes) scene.ChainEvent(3); base.OnRenderFrame(__args); }
+    
+    
+    
 }
