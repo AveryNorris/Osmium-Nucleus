@@ -5,9 +5,9 @@
 ---
 
 
-Components are the main innovation in Awperative's take on a modern, unbiased
-**ECS** [(Entity Component System)](https://en.wikipedia.org/wiki/Entity_component_system); traditionally, 
-an Entity Component system involves 2/3 types of data.
+Components are the main change in Awperative's take on a modern, unbiased
+**EC/ECS** [(Entity Component System)](https://en.wikipedia.org/wiki/Entity_component_system), or GameObject Component system; traditionally, 
+a GameObject Component system involves 2/3 types of data.
 
     Parent Scene/World :
         
@@ -15,24 +15,28 @@ an Entity Component system involves 2/3 types of data.
             
             Children Components/Scripts
 
+
+- **Scenes** are basically the worlds these objects inhabit. Common *synonyms* are Worlds or Levels. If GameObjects
+  are files in our analogy, then scenes are separate hard drives. The scene's jobs mainly center around being a
+  Docker. *(Rather than an object of functionality)*
+
+
+- **GameObjects** are the parents components are glued to, in most Game Libraries and Engines
+  they are also treated as physical objects; and often given properties like **Transform** and **Tags**.
+  GameObjects can also commonly nest in each other. I sometimes find it useful to view
+  these as Directories for components.
+
+  
  - **Components** are what we actually care about, shockingly, they are the
 "Component" in Entity Component System, and you can think about them as the actual
 scripts or program in your Game, but a little more object-oriented.
 
-   
- - **GameObjects** are the parents components are glued to, in most Game Libraries and Engines
-they are also treated as physical objects; and often given properties like **Transform** and **Tags**. 
-GameObjects can also commonly nest in each other. I find it useful *(Especially in Awperative)* to view
-these as Directories for components.
 
-   
 
- - **Scenes** are basically the worlds these objects inhabit. Common *synonyms* are Worlds or Levels. If GameObjects
-are files in our analogy, then scenes are separate hard drives. The scene's jobs mainly center around being a
-Docker. *(Rather than an object of functionality)*
 
+\
 **Keep in mind** that this is a general description of **other** Game Development Platforms. It's impossible to summarize
-every single **ECS** in the world. 
+every single **ECS** in the world. (A lot of ECS' also use **systems** alongside this hierarchy)
 
 ## How Awperative Differs
 
@@ -45,17 +49,22 @@ As of this current version, Awperative's **ECS** has taken on a different form t
             Children Components
 
 One of the main **Awperative Principles** is **Generalization**; and during development it became clear
-GameObjects are unnecessary, which caused them to be replaced by: the **Component**.
+GameObjects are unnecessary, which lead to the Component partially taking over the job.
 
-While they are still called **Components**, Awperative's Components are actually a combination of the **GameObjects** and **Components** we discussed earlier. Awperative 
-does not implement many fancy features out of the box; because of that the traditionally useful GameObjects became
-obsolete. Objects are also not built to be flexible like Components, leaving empty, nearly static objects floating in
-our Scenes.
+Rather than the traditional **ECS** Components (Such as Unity), Awperative's Components are actually closer to a combination of the **GameObjects** and **Components** we discussed earlier.
 
-Because of this it was decided to make a more flexible type of entity that can act as GameObject and Component at once.
+Awperative does not implement many fancy features out of the box. **Bias** is almost a requirement for GameObjects
+to be useful. But in Awperative, where even position isn't implemented by default, GameObjects
+tend to become basically useless objects; that just hold **Components** and transfer **Events**
+
+
+Because of this I decided to make a more flexible type of entity that can act as GameObject and Component at once.
 However, Components still do not implement many features out of the box, instead we use their **expandability** to our advantage.
+(Which will be explained later)
 
 ## How To Use
+
+### Events
 
 Components are rather easy to control, similar to Engines like Unity, you can make your own custom script by inheriting the abstract "**Component**" class.
 
@@ -65,37 +74,56 @@ On the surface level, Components provide you with your current scene and parents
 
 They also give very handy Game Events which are present in 99% of Game Development Platforms.
 
-    public virtual void Load();
-    public virtual void Unload();
+    Load
+    Unload
 
-    public virtual void Update();
-    public virtual void Draw();
+    Update
+    Draw
 
-    public virtual void Create();
-    public virtual void Destroy();
+    Create
+    Remove
+
 
  - Load and Unload provides a call when the Game is opened and closed respectively, please be wary: these will not call under a force close.
 
 
+ - Update and Draw both trigger each frame, starting with Update then Draw, like most frameworks. It is recommended to put your drawing code
+ within Draw() and keep almost everything else inside Update()
 
- - Update and Draw both trigger each frame, starting with Update. It is recommended to put your non-graphics related
-   code there; and vice versa for Draw.
 
-
- - Finally Create and Destroy are called when the Component is spawned In/Out. It should be noted that Create is called **after** the constructor.
+ - Finally Create and Remove are called when the Component is spawned In/Out. It should be noted that Create is called **after** the constructor.
  If you try to make certain references or calls in the constructor it may not fully work, as the object is half instantiated. It is recommended to use Create when possible. Also, Destroy will not be called if the program is closed, just Unload.
 
-If you want to hook onto any of these methods it is quite simple using the override keyword.
+You can call these events by adding them to your **Component-Inheriting-Class** as shown below. And **Awperative** will automatically
+recognize it as an event! ([If you want to see under the hood](../Overhead/Reflection/EventManager.md))
 
-    public override void Update() {}
+    public void Update() {}
    
 Putting this code inside any Component inheriting class, will create a method that gets called every single frame, just like that!
 
-For any further documentation, please refer to the API section of our glorious website!
+### Important Information
+
+There are a few random tidbits that also make Awperative angry:
+
+ - Components cannot have constructor Parameters, while **Empty** constructors do work, It's recommended to just use Create()
+
+
+ - Some properties of the Component are calculated and NOT stored as one would expect. For instance: Scenes are not
+    actually stored in the class, and they are calculated each time you use them. This is very inexpensive, but you should keep it in mind while developing.
+
+
+ - There are many informative attributes tied to members of **Component**; I would recommend you look at them before using any tool inside Component. For instance: there are marking attributes such as CalculatedProperty that inform
+   you of a member that is not stored but calculated each time you use it.
+
+
+- A good chunk of the Component's functionality is actually coming from the Docker! If you cannot find the Documentation for something, it is probably actually a Docker related object.
 
 ## Examples and Good Practice
 
-First let's see how we can recreate typical GameObject Component. I would most recommend using **Nested Components** to achieve this.
+Since **Awperative** Components are slightly different compared to other ECSs; I thought it would be fitting to
+create a few examples of good practice or "tactics" you can do.
+
+First let's see how we can recreate typical GameObject behavior; I would most recommend using **Nested Components** to achieve this.
 If we pretend we have implemented a few modules for basic transform profiles and sprite management, then we can easily make a basic movable sprite object.
 Like so :
 
@@ -148,13 +176,13 @@ Of course, there is some additional programming that would be needed between eac
 **(Ex. Hitboxes listening to the child transform)**, but you can see how this data structure
 builds intuitively. 
 
-I would recommend compartmentalizing any repeating pieces of code or types into a **Component**. It is also
+It can be handy to compartmentalize any repeating pieces of code or types into a **Component**. It is also
 not immediately obvious at first, But I would say one of the largest utilities from an **object free component** system is the ability
 to function at a high level in the scene.
 
-Often times in component-object **ECS**'  you will have a static object/s that stores important one off Components, such as the *Camera*,
-or the *Game's Asset Loader*. I've always found this to be unsatisfying. Luckily because Components can operate as standalone objects
-you can instead insert a standalone Camera Component into the scene. Which makes more logical and grammatical sense.
+Often times in component-object **ECS**'  you will have a **singleton** object/s that stores important one off Components, such as the *Camera*,
+or the *Game's Asset Loader*. By virtue of GameObjects, these **singletons** are required to have at least an empty GameObject as a parent. I've always found this to be unsatisfying. Luckily, Awperative Components can operate as standalone objects!
+You can insert a standalone Camera Component into the scene. Which feels cleaner and makes much more logical sense.
 
     Parent Scene/World
         
@@ -169,17 +197,17 @@ This is possible because of an essential piece known as the **Docker**.
 
 Dockers are seen everywhere in Awperative. They are built to store   child Components. The Component class carries a Docker like so.
 
-    Component : Docker
+    Component : ComponentDocker
 
-Dockers also provide the Add, Get and Remove functions we all know and love, along with the list of child Components. 
+Dockers also provide the Add, Get and Destroy functions we all know and love, along with the list of child Components. 
 It is also responsible for Awperative Events being passed through the Scene, for Example, an Update call would look like this
 
-    Scene    -> Docker        -> Component(Docker's child)
-    Update() -> ChainUpdate() -> Update()
+    Scene    -> Docker                       -> Component(Docker's child)
+    Update() -> ChainEvent(EventType.Update) -> Update()
 
-Of course, the Update call would be redirected to a different spot if you were to override it, but the idea stays the same.
 
-For more details, please look at Docker in the API and the file in Awperative!
+For anyone wondering why **ComponentDocker** is not a part of Component, or any other details: Please see ([ComponentDocker.md](../ComponentDocker/ComponentDocker.md))
+
 ## Specialized Components
 
 Because of its focus on **Expandability**, Awperative also allows **third-party** Components to enter the Scene.
@@ -218,17 +246,17 @@ abstract Component class. But it is possible to build an in-between class for ad
 
     Your Script : EnemyComponent : Component : Docker
 
-As you can see we inherited through EnemyComponent rather than Component. This is perfectly legal; and intended!
+As you can see we inherited through a new (Theoretical) class called EnemyComponent rather than Component. This is perfectly legal; and intended!
 You can do virtually anything in your specialized Component in-between. I most recommend making use of **lambda** in situations like this.
 
 For instance, you can provide simpler access to another Component like so
 
-    int Health => Parent.Get<Health>().Health;
+    int Health -> Parent.Get<Health>().Health;
 
 Any future EnemyComponents can simply put "**Health**" and it will correctly retrieve the dynamic value.
 
 I should mention that this power comes with **great responsibility**. In this case: using EnemyComponent without a Health Component
-will cause logged errors, and possibly a runtime error/halt.
+will cause logged errors, and possibly a runtime error/halt. But this functionality poses to harm to anyone using **Components** as normal.
 
 ---
 

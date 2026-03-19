@@ -24,7 +24,6 @@ internal static class EventManager
     /// <summary> All types of time based events in Awperative.</summary>
     internal static readonly ImmutableArray<string> Events = [
         "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL AWPERATIVE RELATED EVENTS
-        
     ];
     
     
