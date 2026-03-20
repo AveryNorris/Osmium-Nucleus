@@ -25,3 +25,4 @@ Called a **Docker** for short; the **Component-Docker** carries **three main fun
     Providing an Interfacet to Modify Children
 
     Transferring Events to the appropriate Components
+
