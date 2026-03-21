@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 public static class Debug
@@ -14,7 +14,7 @@ public static class Debug
         
         
     /// <summary>
-    /// True path of the log file Awperative dumps to.
+    /// True path of the log file Osmium dumps to.
     /// </summary>
     public static string LogFilePath { get; private set; }
         
@@ -63,10 +63,9 @@ public static class Debug
         
         
     /// <summary>
-    /// Sets up the Awperative debugger and finds the log file.
+    /// Sets up the Osmium debugger and finds the log file.
     /// </summary>
-    public static void Start() {
-        if(Running) return;
+    static Debug() {
 
         Running = true;
             

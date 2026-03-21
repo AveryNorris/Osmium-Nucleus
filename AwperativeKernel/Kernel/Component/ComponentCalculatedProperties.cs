@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 public abstract partial class Component
@@ -31,12 +31,12 @@ public abstract partial class Component
     
     /// <summary> All parent Components and the parents of the parents up until the Scene. Will only list parents of parents, not uncle Components. And will not list the Scene </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public IEnumerable<Component> AllParents => __QueryComponents();
-    private IEnumerable<Component> __QueryComponents() {
+    public IReadOnlyList<Component> AllParents => __QueryComponents();
+    private IReadOnlyList<Component> __QueryComponents() {
         List<Component> returnValue = [];
         ComponentDocker currentComponentDocker = ComponentDocker;
 
-        while (currentComponentDocker is not AwperativeKernel.Scene) {
+        while (currentComponentDocker is not OsmiumNucleus.Scene) {
             if (currentComponentDocker is Component Component) {
                 returnValue.Add(Component);
                 currentComponentDocker = Component.ComponentDocker;

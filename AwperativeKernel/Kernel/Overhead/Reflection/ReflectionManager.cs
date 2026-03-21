@@ -1,27 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using AwperativeKernel;
+using OsmiumNucleus;
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 /// <summary>
-/// Manages all Awperative reflection based activities, right now limited to registering events.
+/// Manages all Osmium reflection based activities, right now limited to registering events.
 /// </summary>
 /// <author> Avery Norris </author>
 internal static class ReflectionManager
 {
     /// <summary> Resolves all the modules from the calling assembly and module manager</summary>
     [MarkerAttributes.UnsafeInternal]
-    internal static void ResolveModules(Assembly[] __assemblies) {
-        foreach (Assembly assembly in __assemblies) ResolveAssembly(assembly);
+    internal static void ResolveAllModules() {
+        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) { ResolveModule(assembly); }
+        
+        Debug.LogAction("Finished Resolving!");
     }
     
     /// <summary> Resolves all the types in an assembly.</summary>
     [MarkerAttributes.UnsafeInternal]
-    internal static void ResolveAssembly(Assembly __assembly) {
+    internal static void ResolveModule(Assembly __assembly) {
         foreach (Type type in __assembly.GetTypes()) {
             EventManager.CompileType(type);
         }

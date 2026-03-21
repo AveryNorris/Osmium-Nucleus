@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
-        <RootNamespace>Awperative</RootNamespace>
+        <RootNamespace>OsmiumNucleus</RootNamespace>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <OutputPath>/home/avery/Projects/Awperative/Build/Kernel/</OutputPath>

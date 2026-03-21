@@ -4,10 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using AwperativeKernel;
+using OsmiumNucleus;
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 /// <summary>
@@ -21,7 +21,7 @@ internal static class EventManager
     internal static Dictionary<Type, Action<Component>[]> _TypeAssociatedTimeEvents = [];
     
     
-    /// <summary> All types of time based events in Awperative.</summary>
+    /// <summary> All types of time based events in Osmium.</summary>
     internal static readonly ImmutableArray<string> Events = [
         "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL AWPERATIVE RELATED EVENTS
     ];

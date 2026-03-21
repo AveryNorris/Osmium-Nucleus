@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 /// <summary>
-/// Base class for all Awperative objects. Responsible for Managing hierarchy between Components and Scenes, has Extensive Component Manipulation Available.
+/// Base class for all Osmium objects. Responsible for Managing hierarchy between Components and Scenes, has Extensive Component Manipulation Available.
 /// Also transfers Time and Carries most of the responsibilities akin to the Component. NOT FOR INHERITING, please use docker by inheriting component.
 /// </summary>
 /// <author> Avery Norris </author>
@@ -55,9 +55,9 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     
     
     //Indexers to make for loops easier.
-    public Component this[[DebugAttributes.ValueFitsRange] int __index] {
-        get => !DebugAttributes.ValueFitsRange.VerifyOrThrow(__index, 0, _components.Count) ? null : _components[__index];
-        set { if (!DebugAttributes.ValueFitsRange.VerifyOrThrow(__index, 0, _components.Count)) return; _components[__index] = value; }
+    public Component this[int __index] {
+        get => !Guard.ValueFitsRange(__index, 0, _components.Count) ? null : _components[__index];
+        set { if (!Guard.ValueFitsRange(__index, 0, _components.Count)) return; _components[__index] = value; }
     }
     
     
@@ -94,7 +94,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     /// <summary> Resorts the component list to order of priority </summary>
     [MarkerAttributes.UnsafeInternal]
     internal void UpdatePriority(Component __component, int __priority) {
-        _components.Sort(Awperative._prioritySorter);
+        _components.Sort(Component._prioritySorter);
     }
     
     /// <summary> Sends an event to all Children and tells them to continue it. </summary>

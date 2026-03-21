@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 
 public abstract partial class ComponentDocker
@@ -14,9 +14,9 @@ public abstract partial class ComponentDocker
 
     /// <summary> Attaches a preexisting component to the docker, this is not transferring the component, the method will throw an error if the component is already attached to a docker</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void Add([DebugAttributes.ComponentNotNull, DebugAttributes.OrphanComponent] Component __component) {
-        if (!DebugAttributes.ComponentNotNull.VerifyOrThrow(__component)) return;
-        if (!DebugAttributes.OrphanComponent.VerifyOrThrow(__component)) return;
+    public void Add(Component __component) {
+        if (!Guard.ComponentNotNull(__component)) return;
+        if (!Guard.OrphanComponent(__component)) return;
 
         InitiateComponent(__component);
     }
@@ -33,7 +33,7 @@ public abstract partial class ComponentDocker
 
     /// <summary> Creates a new instance of that type of component and attaches it to the docker, and returns a reference to it.</summary>    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public __Type Add<__Type>(string name = null, [DebugAttributes.ValueFitsRange] int priority = 0, Collection<string> tags = null) where __Type : Component, new() {
+    public __Type Add<__Type>(string name = null, int priority = 0, Collection<string> tags = null) where __Type : Component, new() {
         Component newComponent = new __Type();
         newComponent.Name = name ??= typeof(__Type).Name;
         newComponent._tags = [..tags ??= []];
@@ -62,9 +62,9 @@ public abstract partial class ComponentDocker
 
     /// <summary> Destroys a component attached to the Docker </summary>
     /// <param name="__component"></param>
-    public void Destroy([DebugAttributes.ComponentNotNull, DebugAttributes.DockerOwns] Component __component) {
-        if (!DebugAttributes.ComponentNotNull.VerifyOrThrow(__component)) return;
-        if (!DebugAttributes.DockerOwns.VerifyOrThrow(this, __component)) return;
+    public void Destroy(Component __component) {
+        if (!Guard.ComponentNotNull(__component)) return;
+        if (!Guard.DockerOwns(this, __component)) return;
 
         __component.TryEvent(5);
         __component.ChainEvent(5);
@@ -83,7 +83,7 @@ public abstract partial class ComponentDocker
 
     /// <summary> Destroys all the components in a given list </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll([DebugAttributes.EnumerableNotNull, DebugAttributes.DockerOwns] IEnumerable<Component> __Components) { foreach (Component component in __Components.ToArray()) Destroy(component); }
+    public void DestroyAll(IEnumerable<Component> __Components) { foreach (Component component in __Components.ToArray()) Destroy(component); }
 
 
 
@@ -101,38 +101,38 @@ public abstract partial class ComponentDocker
 
     /// <summary> Destroys all components that have all the given tags</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll([DebugAttributes.EnumerableNotNull] IEnumerable<string> __tags) => DestroyAll(GetAll(__tags));
+    public void DestroyAll(IEnumerable<string> __tags) => DestroyAll(GetAll(__tags));
 
 
 
 
     /// <summary> Destroys all Components that have the given type, and all the given tags</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll<__Type>([DebugAttributes.EnumerableNotNull] IEnumerable<string> __tags) where __Type : Component => DestroyAll(GetAll<__Type>(__tags));
+    public void DestroyAll<__Type>(IEnumerable<string> __tags) where __Type : Component => DestroyAll(GetAll<__Type>(__tags));
 
 
 
 
     /// <summary> Destroys all the components with the given tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll([DebugAttributes.NotNull] string __tag) => DestroyAll(GetAll([__tag]));
+    public void DestroyAll(string __tag) => DestroyAll(GetAll([__tag]));
 
 
 
     /// <summary> Destroys all the components that have a certain type, and a certain tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll<__Type>([DebugAttributes.NotNull] string __tag) where __Type : Component => DestroyAll(GetAll<__Type>([__tag]));
+    public void DestroyAll<__Type>(string __tag) where __Type : Component => DestroyAll(GetAll<__Type>([__tag]));
 
 
 
     /// <summary> Destroys the first component with the given tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void Destroy([DebugAttributes.NotNull] string __tag) => Destroy(GetAll([__tag]).FirstOrDefault());
+    public void Destroy(string __tag) => Destroy(GetAll([__tag]).FirstOrDefault());
 
 
 
     /// <summary> Destroys the Destroys component with the given type and tag</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void Destroy<__Type>([DebugAttributes.NotNull] string __tag) where __Type : Component => Destroy(GetAll<__Type>(__tag).FirstOrDefault());
+    public void Destroy<__Type>(string __tag) where __Type : Component => Destroy(GetAll<__Type>(__tag).FirstOrDefault());
 
 }

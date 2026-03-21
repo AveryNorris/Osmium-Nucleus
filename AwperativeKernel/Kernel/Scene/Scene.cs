@@ -1,9 +1,9 @@
 
 
-namespace AwperativeKernel;
+namespace OsmiumNucleus;
 
 /// <summary>
-/// One of the main Awperative entities. Acts like a master folder for components to be stored in.
+/// One of the main Osmium entities. Acts like a master folder for components to be stored in.
 /// </summary>
 /// <author> Avery Norris </author>
 public class Scene : ComponentDocker
