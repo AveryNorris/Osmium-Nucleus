@@ -12,9 +12,9 @@ using OpenTK.Windowing.Desktop;
 namespace OsmiumNucleus;
 
 
-/// <summary> Bottom class of Osmium. Carries events from MonoGame into scenes and hooks, and provides OpenTK context.</summary>
+/// <summary> Bottom class of Osmium. Carries events from MonoGame into scenes, and provides OpenTK context.</summary>
 /// <author> Avery Norris </author>
-public sealed class Base() : GameWindow(GameWindowSettings.Default, new NativeWindowSettings() { })
+public sealed class Context() : GameWindow(GameWindowSettings.Default, new NativeWindowSettings() { })
 {
     
     

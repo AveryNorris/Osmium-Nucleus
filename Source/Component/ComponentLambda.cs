@@ -3,42 +3,59 @@ namespace OsmiumNucleus;
 
 public abstract partial class Component
 {
-    /// <inheritdoc crOsmium.AddScene(string)cene"/>
+    
+    
+    
+    /// <inheritdoc cref="Osmium.Context"/>
+    public static Context OsmiumContext => Osmium.Context;
+    
+    
+    
+    /// <inheritdoc cref="Osmium._scenes"/>
+    [MarkerAttributes.VariablePointer]
+    public static IReadOnlySet<Scene> Scenes => Osmium._scenes;
+    
+    
+    
+    /// <inheritdoc cref="Osmium.AddScene(string)"/>
     [MarkerAttributes.MethodPointer]
-    public static Scene CreateScene(string __name) => Osmium.AddScene(__name);
-
+    public static Scene AddScene(string __name) => Osmium.AddScene(__name);
+    
 
 
     /// <inheritdoc cref="Osmium.GetScene"/>
     [MarkerAttributes.MethodPointer]
     public static Scene GetScene(string __name) => Osmium.GetScene(__name);
-
-
-
-    /// <inheritdoc cref="Osmium.CloseScene(OsmiumNucleus.Scene)"/>
+    
+    
+    
+    /// <inheritdoc cref="Osmium.ContainsScene"/>
     [MarkerAttributes.MethodPointer]
-    public void RemoveScene(Scene __scene) => Osmium.CloseScene(__scene);
+    public static bool ContainsScene(string __name) => Osmium.ContainsScene(__name);
 
 
 
-    /// <inheritdock cref="Osmium.CloseScene(string)" />
+    /// <inheritdoc cref="Osmium.RemoveScene(OsmiumNucleus.Scene)"/>
     [MarkerAttributes.MethodPointer]
-    public void RemoveScene(string __name) => Osmium.CloseScene(__name);
+    public static void RemoveScene(Scene __scene) => Osmium.RemoveScene(__scene);
+
+
+
+    /// <inheritdock cref="Osmium.RemoveScene(string)" />
+    [MarkerAttributes.MethodPointer]
+    public static void RemoveScene(string __name) => Osmium.RemoveScene(__name);
+    
+    
     
     
     
     /// <inheritdoc cref="ComponentDocker.Move(Component, OsmiumNucleus.ComponentDocker)"/>
     [MarkerAttributes.MethodPointer]
-    public void Move(ComponentDocker __newDocker) => ComponentDocker.Move(this, __newDocker);
+    public void Move(ComponentDocker __newDocker) => Parent.Move(this, __newDocker);
 
 
 
     /// <summary> Makes the Component destroy itself </summary>
     [MarkerAttributes.MethodPointer]
-    public void DestroySelf() => ComponentDocker.Destroy(this);
-
-
-
-    /// <inheritdoc cref="Osmium.Base"/>
-    public Base AwperativeBase => Osmium.Base;
+    public void Destroy() => Parent.Destroy(this);
 }

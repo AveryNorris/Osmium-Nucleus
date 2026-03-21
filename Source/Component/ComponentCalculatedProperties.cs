@@ -1,29 +1,40 @@
-using System.Collections.Generic;
-
-
 namespace OsmiumNucleus;
 
 
 public abstract partial class Component
 {
+    
+    
+    
     /// <summary> Scene the Component resides in. To save ram it's not stored but calculated on the fly. </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public Scene Scene => __QueryScene();
     private Scene __QueryScene() {
-        if (ComponentDocker is Scene scene) return scene;
-        if (ComponentDocker is Component Component) return Component.__QueryScene();
-            
+        if (Parent is Scene scene) return scene;
+        if (Parent is Component Component) return Component.__QueryScene();
+        
         return null;
     }
     
     
     
-    /// <summary> Returns the Parent Component. Will be null if the Component's parent is a Scene. </summary>
+    /// <summary> Returns the Parent Component. Will be null if the Component's parent is not a Component. </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public Component Parent => __QueryParent();
-    private Component __QueryParent() {
-        if (ComponentDocker is Component Component)
+    public Component ComponentParent => __QueryComponentParent();
+    private Component __QueryComponentParent() {
+        if (Parent is Component Component)
             return Component;
+        return null;
+    }
+    
+    
+    
+    /// <summary> Returns the Parent Scene. Will be null if the Component's parent is not a Scene. </summary>
+    [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
+    public Scene SceneParent => __QuerySceneParent();
+    private Scene __QuerySceneParent() {
+        if (Parent is Scene Scene)
+            return Scene;
         return null;
     }
     
@@ -34,12 +45,14 @@ public abstract partial class Component
     public IReadOnlyList<Component> AllParents => __QueryComponents();
     private IReadOnlyList<Component> __QueryComponents() {
         List<Component> returnValue = [];
-        ComponentDocker currentComponentDocker = ComponentDocker;
+        ComponentDocker currentComponentDocker = Parent;
 
-        while (currentComponentDocker is not OsmiumNucleus.Scene) {
+        while (true) {
             if (currentComponentDocker is Component Component) {
                 returnValue.Add(Component);
-                currentComponentDocker = Component.ComponentDocker;
+                currentComponentDocker = Component.Parent;
+            } else {
+                break;
             }
         }
 

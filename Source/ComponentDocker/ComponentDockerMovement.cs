@@ -20,7 +20,7 @@ public abstract partial class ComponentDocker
         RemoveComponentFromLists(__component);
         __componentDocker.AddComponentToLists(__component);
         
-        __component.ComponentDocker = __componentDocker;
+        __component.Parent = __componentDocker;
     }
         
 

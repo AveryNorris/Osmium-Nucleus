@@ -12,45 +12,31 @@ public abstract partial class ComponentDocker
 {
 
 
-    /// <summary> Attaches a preexisting component to the docker, this is not transferring the component, the method will throw an error if the component is already attached to a docker</summary>
+    /// <summary> Creates a new instance of that type of component and attaches it to the docker, then returns a reference to it.</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public void Add(Component __component) {
-        if (!Guard.ComponentNotNull(__component)) return;
-        if (!Guard.OrphanComponent(__component)) return;
-
-        InitiateComponent(__component);
-    }
-
-
-    /// <summary> Creates a new instance of that type of component and attaches it to the docker, and returns a reference to it.</summary>
-    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public __Type Add<__Type>() where __Type : Component, new() {
+    public __Type Add<__Type>(string? name = null, IEnumerable<string>? tags = null, int priority = 0, bool enabled = true) where __Type : Component, new() {
         Component newComponent = new __Type();
-        InitiateComponent(newComponent);
-        return (__Type)newComponent;
-    }
 
+        name ??= typeof(__Type).Name;
+        tags ??= [];
 
-    /// <summary> Creates a new instance of that type of component and attaches it to the docker, and returns a reference to it.</summary>    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
-    public __Type Add<__Type>(string name = null, int priority = 0, Collection<string> tags = null) where __Type : Component, new() {
-        Component newComponent = new __Type();
-        newComponent.Name = name ??= typeof(__Type).Name;
-        newComponent._tags = [..tags ??= []];
-        newComponent.Priority = priority;
-
-        InitiateComponent(newComponent);
+        InitiateComponent(newComponent, name, tags.ToHashSet(), priority, enabled);
         return (__Type)newComponent;
     }
 
 
     /// <summary> Initiates a component into the docker. </summary>
     [MarkerAttributes.UnsafeInternal]
-    private void InitiateComponent(Component __component) {
+    private void InitiateComponent(Component __component, string __name, HashSet<string> __tags, int __priority, bool __enabled) {
         //add to Component Docker's lists
         AddComponentToLists(__component);
 
-        __component.ComponentDocker = this;
+        __component.Parent = this;
+        
+        __component.Name = __name;
+        __component.Priority = __priority;
+        __component._tags = __tags;
+        
         //create event
         __component.TryEvent(4);
         __component.ChainEvent(4);
@@ -70,7 +56,7 @@ public abstract partial class ComponentDocker
         __component.ChainEvent(5);
 
         RemoveComponentFromLists(__component);
-        __component.ComponentDocker = null;
+        __component.Parent = null;
     }
 
 

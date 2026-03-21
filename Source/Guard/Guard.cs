@@ -17,6 +17,7 @@ namespace OsmiumNucleus;
 /// However, nothing is stopping you from using them any other way, so go wild. Feel free to make more, or use these in your own code!
 /// </usage>
 /// <author> Avery Norris </author>
+[Obsolete("Use NewGuard")]
 public static class Guard
 {
     #region Docker/Entity
@@ -62,16 +63,16 @@ public static class Guard
 
     /// <summary> Requires that the Component does not belong to a Docker</summary>
     public static bool OrphanComponent(Component __component) {
-        if (__component.ComponentDocker == null) return true;
+        if (__component.Parent == null) return true;
 
         Debug.LogError("Component is already owned!",
             ["ComponentType", "ComponentName", "ComponentHash", "DockerType", "DockerName", "DockerHash"], [
                 __component.GetType().Name,
                 __component.Name,
                 __component.GetHashCode().ToString("N0"),
-                __component.ComponentDocker.GetType().Name,
-                __component.ComponentDocker switch { Scene scene => scene.Name, Component component => component.Name, _ => "unknown" },
-                __component.ComponentDocker.GetHashCode().ToString("N0")
+                __component.Parent.GetType().Name,
+                __component.Parent switch { Scene scene => scene.Name, Component component => component.Name, _ => "unknown" },
+                __component.Parent.GetHashCode().ToString("N0")
             ]);
 
         return Debug.IgnoreErrors;

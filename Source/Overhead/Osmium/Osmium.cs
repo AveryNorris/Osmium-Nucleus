@@ -1,21 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-
-
 namespace OsmiumNucleus;
 
 /// <summary>
-/// Main class of Osmium, allows you to Create() scenes and Start() the game
+/// Main class of Osmium, allows you to Create() scenes and Initialize() the game
 /// </summary>
 /// <author> Avery Norris </author>
 public static class Osmium
 {
 
+    
     
     /// <summary> Current Version of Osmium </summary>
     public const string Version = "1.2C";
@@ -23,7 +15,7 @@ public static class Osmium
 
 
     /// <summary> Bottom class of Osmium. Contains the OpenTK Instance. </summary>
-    public static Base Base { get; private set; }
+    public static Context Context { get; private set; }
 
     
     
@@ -43,14 +35,14 @@ public static class Osmium
     
     
     /// <summary> Gets Osmium ready to begin and Compiles Component functions. Please call before doing anything Osmium related! </summary>
-    public static void Start() {
+    public static void Initialize() {
         if (IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
         if (IsStarted) { Debug.LogError("Osmium has already Started!"); return; }
         
         IsStarted = true;
         
         //initialize here to allow any required access before Run()
-        Base = new Base();
+        Context = new Context();
 
         ReflectionManager.ResolveAllModules();
         
@@ -67,13 +59,13 @@ public static class Osmium
         IsRunning = true;
         
         Debug.LogAction("Beginning Update Loop!");
-        Base.Run();
+        Context.Run();
     }
     
     
     
     /// <summary> Closes Osmium! </summary>
-    public static void Close() => Base.Close();
+    public static void Close() => Context.Close();
 
     
     
@@ -118,7 +110,7 @@ public static class Osmium
 
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public static void CloseScene(Scene __scene) {
+    public static void RemoveScene(Scene __scene) {
         if(!Guard.NotNull(__scene)) return;
         if(!Guard.SceneExists(__scene.Name)) return;
         
@@ -129,7 +121,7 @@ public static class Osmium
 
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public static void CloseScene(string __name) {
+    public static void RemoveScene(string __name) {
         if(!Guard.NotNull(__name)) return;
         if(!Guard.SceneExists(__name)) return;
 

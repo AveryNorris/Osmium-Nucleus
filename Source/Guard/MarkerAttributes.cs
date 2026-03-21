@@ -55,7 +55,8 @@ public static class MarkerAttributes
             ON,
             ONLogN,
             ON2,
-            ON3
+            ON3,
+            ONK,
         }
         
         public TimeComplexity complexity = __complexity;
@@ -66,4 +67,10 @@ public static class MarkerAttributes
     /// <summary> Shows that the given method does not actually belong to the object, but instead just calls a lambda to another method. </summary>
     [AttributeUsage(AttributeTargets.All)]
     public class MethodPointer : Attribute { }
+    
+    
+    
+    /// <summary> Shows that the given variable does not actually belong to the object, but instead just calls a lambda to another method. </summary>
+    [AttributeUsage(AttributeTargets.All)]
+    public class VariablePointer : Attribute { }
 }

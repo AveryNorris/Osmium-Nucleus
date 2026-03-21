@@ -16,14 +16,14 @@ namespace OsmiumNucleus;
 /// <author> Avery Norris </author>
 internal static class EventManager
 {
-    /// <summary> Holds an associated action for each component and a time event. Is built with CompileType() during Start().</summary>
+    /// <summary> Holds an associated action for each component and a time event. Is built with CompileType() during Initialize().</summary>
     [MarkerAttributes.UnsafeInternal]
     internal static Dictionary<Type, Action<Component>[]> _TypeAssociatedTimeEvents = [];
     
     
     /// <summary> All types of time based events in Osmium.</summary>
     internal static readonly ImmutableArray<string> Events = [
-        "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL AWPERATIVE RELATED EVENTS
+        "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL Osmium RELATED EVENTS
     ];
     
     

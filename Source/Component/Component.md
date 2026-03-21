@@ -1,13 +1,13 @@
-# Awperative Components
+# Osmium Components
 
 ### Code and Documentation by Avery Norris
 
 ---
 
 
-Components are the main change in Awperative's take on a modern, unbiased
-**EC/ECS** [(Entity Component System)](https://en.wikipedia.org/wiki/Entity_component_system), or GameObject Component system; traditionally, 
-a GameObject Component system involves 2/3 types of data.
+Components are the main change in Osmium's take on a modern, unbiased **GameObject-Component system** or
+**EC/ECS** [(Entity Component System)](https://en.wikipedia.org/wiki/Entity_component_system). They vary often, but the
+most popular systems such as **Unity**, **Godot** or **Unreal** traditionally involve 2/3 types of data.
 
     Parent Scene/World :
         
@@ -38,9 +38,9 @@ scripts or program in your Game, but a little more object-oriented.
 **Keep in mind** that this is a general description of **other** Game Development Platforms. It's impossible to summarize
 every single **ECS** in the world. (A lot of ECS' also use **systems** alongside this hierarchy)
 
-## How Awperative Differs
+## How Osmium Differs
 
-As of this current version, Awperative's **ECS** has taken on a different form than most.
+As of this current version, Osmium's **ECS** has taken on a different form than most.
 
     Parent Scene/World
 
@@ -48,13 +48,13 @@ As of this current version, Awperative's **ECS** has taken on a different form t
 
             Children Components
 
-One of the main **Awperative Principles** is **Generalization**; and during development it became clear
+One of the main **Osmium Principles** is **Generalization**; and during development it became clear
 GameObjects are unnecessary, which lead to the Component partially taking over the job.
 
-Rather than the traditional **ECS** Components (Such as Unity), Awperative's Components are actually closer to a combination of the **GameObjects** and **Components** we discussed earlier.
+Rather than the traditional **ECS** Components (Such as Unity), Osmium's Components are actually closer to a combination of the **GameObjects** and **Components** we discussed earlier.
 
-Awperative does not implement many fancy features out of the box. **Bias** is almost a requirement for GameObjects
-to be useful. But in Awperative, where even position isn't implemented by default, GameObjects
+Osmium does not implement many fancy features out of the box. **Bias** is almost a requirement for GameObjects
+to be useful. But in Osmium, where even position isn't implemented by default, GameObjects
 tend to become basically useless objects; that just hold **Components** and transfer **Events**
 
 
@@ -92,9 +92,9 @@ They also give very handy Game Events which are present in 99% of Game Developme
 
 
  - Finally Create and Remove are called when the Component is spawned In/Out. It should be noted that Create is called **after** the constructor.
- If you try to make certain references or calls in the constructor it may not fully work, as the object is half instantiated. It is recommended to use Create when possible. Also, Destroy will not be called if the program is closed, just Unload.
+ If you try to make certain references or calls in the constructor it may not fully work, as the object is half instantiated. It is recommended to use Create when possible. Also, Remove will not be called if the program is closed, only if it is actually called with Remove(component)
 
-You can call these events by adding them to your **Component-Inheriting-Class** as shown below. And **Awperative** will automatically
+You can call these events by adding them to your **Component-Inheriting-Class** as shown below. And **Osmium** will automatically
 recognize it as an event! ([If you want to see under the hood](../Overhead/Reflection/EventManager.md))
 
     public void Update() {}
@@ -103,13 +103,13 @@ Putting this code inside any Component inheriting class, will create a method th
 
 ### Important Information
 
-There are a few random tidbits that also make Awperative angry:
+There are a few random tidbits that also make Osmium angry:
 
  - Components cannot have constructor Parameters, while **Empty** constructors do work, It's recommended to just use Create()
 
 
  - Some properties of the Component are calculated and NOT stored as one would expect. For instance: Scenes are not
-    actually stored in the class, and they are calculated each time you use them. This is very inexpensive, but you should keep it in mind while developing.
+    actually stored in the class, and they are calculated each time you use them. This is very inexpensive, but you should keep it in mind while developing; and cache when needed.
 
 
  - There are many informative attributes tied to members of **Component**; I would recommend you look at them before using any tool inside Component. For instance: there are marking attributes such as CalculatedProperty that inform
@@ -120,7 +120,7 @@ There are a few random tidbits that also make Awperative angry:
 
 ## Examples and Good Practice
 
-Since **Awperative** Components are slightly different compared to other ECSs; I thought it would be fitting to
+Since **Osmium** Components are slightly different compared to other ECSs; I thought it would be fitting to
 create a few examples of good practice or "tactics" you can do.
 
 First let's see how we can recreate typical GameObject behavior; I would most recommend using **Nested Components** to achieve this.
@@ -181,7 +181,7 @@ not immediately obvious at first, But I would say one of the largest utilities f
 to function at a high level in the scene.
 
 Often times in component-object **ECS**'  you will have a **singleton** object/s that stores important one off Components, such as the *Camera*,
-or the *Game's Asset Loader*. By virtue of GameObjects, these **singletons** are required to have at least an empty GameObject as a parent. I've always found this to be unsatisfying. Luckily, Awperative Components can operate as standalone objects!
+or the *Game's Asset Loader*. By virtue of GameObjects, these **singletons** are required to have at least an empty GameObject as a parent. I've always found this to be unsatisfying. Luckily, Osmium Components can operate as standalone objects!
 You can insert a standalone Camera Component into the scene. Which feels cleaner and makes much more logical sense.
 
     Parent Scene/World
@@ -195,12 +195,12 @@ You can insert a standalone Camera Component into the scene. Which feels cleaner
 As you've seen part of what makes **Components** so great is the fact that they can nest within themselves infinitely.
 This is possible because of an essential piece known as the **Docker**.
 
-Dockers are seen everywhere in Awperative. They are built to store   child Components. The Component class carries a Docker like so.
+Dockers are seen everywhere in Osmium. They are built to store   child Components. The Component class carries a Docker like so.
 
     Component : ComponentDocker
 
 Dockers also provide the Add, Get and Destroy functions we all know and love, along with the list of child Components. 
-It is also responsible for Awperative Events being passed through the Scene, for Example, an Update call would look like this
+It is also responsible for Osmium Events being passed through the Scene, for Example, an Update call would look like this
 
     Scene    -> Docker                       -> Component(Docker's child)
     Update() -> ChainEvent(EventType.Update) -> Update()
@@ -210,7 +210,7 @@ For anyone wondering why **ComponentDocker** is not a part of Component, or any 
 
 ## Specialized Components
 
-Because of its focus on **Expandability**, Awperative also allows **third-party** Components to enter the Scene.
+Because of its focus on **Expandability**, Osmium also allows **third-party** Components to enter the Scene.
 This allows for specialized Component or streamlined development, if you are willing to make assumptions.
 
 Let's imagine you are making an enemy for an RPG and your Component Layout looks somewhat like this
@@ -234,7 +234,7 @@ And let's imagine that any time you add an enemy, then you will probably be addi
 uses aspects from the others present.
 
 In a scenario like this, it would likely behoove you to create a specialized Component type. As mentioned earlier, Components are identified by inheriting the
-abstract Component class. But it is possible to build an in-between class for additional functionality.
+abstract Component class. And it is possible to build an in-between class for additional functionality!
 
  - Traditional Pattern
 
@@ -263,3 +263,7 @@ will cause logged errors, and possibly a runtime error/halt. But this functional
 ---
 # End Of Documentation
 ### Code and Documentation by Avery Norris
+
+<p align="center">
+  <img src="Osmium.png" width="150px" style="image-rendering: pixelated; align-content: center;" alt="OsmiumLogo">
+</p>

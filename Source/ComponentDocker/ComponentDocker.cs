@@ -88,7 +88,11 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     }
 
 
-
+    /// <summary> Algorithm for how Components are sorted via Priority </summary>
+    internal static readonly Comparer<Component> _prioritySorter = Comparer<Component>.Create((a, b) => {
+        int result = b.Priority.CompareTo(a.Priority); 
+        return (result != 0) ? result : a.GetHashCode().CompareTo(b.GetHashCode());
+    });
 
 
     /// <summary> Resorts the component list to order of priority </summary>
@@ -140,4 +144,5 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     internal void UnhashTaggedComponent(string __tag, Component __component) {
         if(!_componentTagDictionary.ContainsKey(__tag)) _componentTagDictionary[__tag].Remove(__component);
     }
+
 }
