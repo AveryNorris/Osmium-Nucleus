@@ -1,6 +1,0 @@
-- name: Introduction
-  items :
-  - name: What Is Awperative
-    href: whatis.md
-  - name: Why Use Awperative
-    href: whyuse.md
