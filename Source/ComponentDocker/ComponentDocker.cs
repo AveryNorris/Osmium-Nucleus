@@ -1,25 +1,24 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
 
 namespace OsmiumNucleus;
 
 
-/// <summary>
-/// Base class for all Osmium objects. Responsible for Managing hierarchy between Components and Scenes, has Extensive Component Manipulation Available.
-/// Also transfers Time and Carries most of the responsibilities akin to the Component. NOT FOR INHERITING, please use docker by inheriting component.
-/// </summary>
+/// <summary> Base class for both Scenes and Components. Responsible for Managing hierarchy between Components and Scenes and managing children, has Extensive Component Manipulation Available.
+/// Also transfers Time and Carries most of the responsibilities akin to the Component. NOT FOR OUTSIDE INHERITANCE (this is very under the hood, and meant to be mostly hidden), please use docker by inheriting component. </summary>
 /// <author> Avery Norris </author>
-public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatable<Component>, IEquatable<ComponentDocker>, IEquatable<Scene>
+#nullable enable
+public abstract partial class ComponentDocker : IEnumerable<Component>
 {
+    
+    
     
     //Blocks external inheritance
     internal ComponentDocker() {}
     
     
     
-    /// <summary> Core of the Docker, holds all of the Components, sorted by update priority.</summary>
+    /// <summary> Core of the Docker, holds all the Components, sorted by update priority.</summary>
     [MarkerAttributes.UnsafeInternal] internal readonly List<Component> _components = [];
     /// <summary> Holds a list of Components at each of their types. This optimizes Get&lt;Type&gt; to O(1) </summary>
     [MarkerAttributes.UnsafeInternal] internal readonly Dictionary<Type, HashSet<Component>> _componentTypeDictionary = new();
@@ -27,9 +26,26 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     [MarkerAttributes.UnsafeInternal] internal readonly Dictionary<string, HashSet<Component>> _componentTagDictionary = new();
     
     
-        
-    /// <summary>  All children belonging to the Component. </summary>
-    public IEnumerable<Component> Children => _components;
+    
+    /// <summary> Algorithm for how Components are sorted via Priority </summary>
+    internal static readonly Comparer<Component> _prioritySorter = Comparer<Component>.Create((a, b) => {
+        int result = b.Priority.CompareTo(a.Priority); 
+        return (result != 0) ? result : a.GetHashCode().CompareTo(b.GetHashCode());
+    });
+
+    /// <summary> Resorts the component list to order of priority </summary>
+    [MarkerAttributes.UnsafeInternal]
+    internal void UpdatePriority(Component __component) {
+        _components.Sort(Component._prioritySorter);
+    }
+    
+    
+    
+    
+    
+    /// <summary>  All children belonging to the Docker. </summary>
+    public IReadOnlyList<Component> Children => _components;
+    
     
     
     /// <summary> All children and children of children until the bottom of the scene. Uses Breadth First Search. </summary>
@@ -49,6 +65,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     }
     
     
+    
     /// <summary>Amount of Components attached to the Docker</summary>
     public int Count => _components.Count;
     
@@ -56,60 +73,37 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     
     //Indexers to make for loops easier.
     public Component this[int __index] {
-        get => !Guard.ValueFitsRange(__index, 0, _components.Count) ? null : _components[__index];
-        set { if (!Guard.ValueFitsRange(__index, 0, _components.Count)) return; _components[__index] = value; }
+        get {
+            if(__index < 0 || __index >= _components.Count) { Debug.LogError("Docker Index out of range!", ["Count", "Index"], [Count.ToString(), __index.ToString()]); return null; }
+            return _components[__index];
+        }
+        set {
+            if(__index < 0 || __index >= _components.Count) { Debug.LogError("Docker Index out of range!", ["Count", "Index"], [Count.ToString(), __index.ToString()]); return; }
+            _components[__index] = value;
+        }
     }
     
     
     
-    //Enumerators that allow convenient foreach loops.
+    //Enumerators that allow convenient foreach loops. Uses ToList() to make a new snapshot of the hashset and allow hashset modification in the loop.
     IEnumerator IEnumerable.GetEnumerator() { return  GetEnumerator(); } 
-    public IEnumerator<Component> GetEnumerator() { return new ComponentDockEnum([.._components]); }
+    public IEnumerator<Component> GetEnumerator() { return _components.ToList().GetEnumerator(); }
     
     
     
-    /// <summary>Compares the Docker to another Scene.</summary>
-    public bool Equals(Scene __other) {
-        if (this is Scene scene)
-            return scene == __other;
-        return false;
-    }
-    
-    /// <summary>Compares the Docker to another Component.</summary>
-    public bool Equals(Component __other) {
-        if (this is Component component)
-            return component == __other;
-        return false;
-    }
-    
-    /// <summary>Compares the Docker to another Docker.</summary>
-    public bool Equals(ComponentDocker __other) {
-        return this == __other;
-    }
-
-
-    /// <summary> Algorithm for how Components are sorted via Priority </summary>
-    internal static readonly Comparer<Component> _prioritySorter = Comparer<Component>.Create((a, b) => {
-        int result = b.Priority.CompareTo(a.Priority); 
-        return (result != 0) ? result : a.GetHashCode().CompareTo(b.GetHashCode());
-    });
-
-
-    /// <summary> Resorts the component list to order of priority </summary>
-    [MarkerAttributes.UnsafeInternal]
-    internal void UpdatePriority(Component __component, int __priority) {
-        _components.Sort(Component._prioritySorter);
-    }
-    
-    /// <summary> Sends an event to all Children and tells them to continue it. </summary>
+    /// <summary> Sends an event to all Children and tells them to continue it. Will stop if this is a Component, and it is not enabled</summary>
     /// <param name="__timeEvent"> Integer ID of the event to send. </param>
     [MarkerAttributes.UnsafeInternal]
     internal void ChainEvent(int __timeEvent) {
+        if(this is Component { Enabled: false }) return;
+        
         for (int i = 0; i < _components.Count; i++) {
             _components[i].TryEvent(__timeEvent);
             _components[i].ChainEvent(__timeEvent);
         }
     }
+    
+    
     
     /// <summary> Add a Component to the Docker. </summary>
     [MarkerAttributes.UnsafeInternal]
@@ -121,6 +115,8 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
         foreach (string tag in __component._tags) HashTaggedComponent(tag, __component);
     }
 
+    
+    
     /// <summary> Removes a Component from the Docker. </summary>
     [MarkerAttributes.UnsafeInternal]
     private void RemoveComponentFromLists(Component __component) {
@@ -142,7 +138,9 @@ public abstract partial class ComponentDocker : IEnumerable<Component>, IEquatab
     /// <summary> Removes a component's hash from the tag dictionary </summary>
     [MarkerAttributes.UnsafeInternal]
     internal void UnhashTaggedComponent(string __tag, Component __component) {
-        if(!_componentTagDictionary.ContainsKey(__tag)) _componentTagDictionary[__tag].Remove(__component);
+        if (_componentTagDictionary.TryGetValue(__tag, out HashSet<Component>? value)) {
+            value.Remove(__component); if(value.Count == 0) _componentTagDictionary.Remove(__tag);
+        }
     }
 
 }

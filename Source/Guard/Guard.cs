@@ -18,7 +18,7 @@ namespace OsmiumNucleus;
 /// </usage>
 /// <author> Avery Norris </author>
 [Obsolete("Use NewGuard")]
-public static class Guard
+public static class Guardd
 {
     #region Docker/Entity
     

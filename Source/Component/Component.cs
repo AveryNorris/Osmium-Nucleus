@@ -3,6 +3,7 @@ namespace OsmiumNucleus;
 
 /// <summary> The backing class for all Components in Osmium. Inherit this to become one. </summary>
 /// <author> Avery Norris </author>
+#nullable enable
 public abstract partial class Component : ComponentDocker
 {
     
@@ -57,12 +58,14 @@ public abstract partial class Component : ComponentDocker
     #region Tags
     
     /// <summary> A list of all tags belonging to the component. Use AddTag() to modify it. Easy to calculate, but setting this requires that the Docker resorts Components; </summary>
-    [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ONK)]
+    [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public IReadOnlySet<string> Tags {
         get => _tags;
         set {
-            foreach (string tag in _tags.ToArray()) RemoveTag(tag);
-            foreach (string tag in value) AddTag(tag);
+            HashSet<string> previousTags = _tags;
+            
+            foreach (string tag in _tags.ToArray()) if(!value.Contains(tag)) RemoveTag(tag);
+            foreach (string tag in value) if(!previousTags.Contains(tag)) AddTag(tag);
         }
     } [MarkerAttributes.UnsafeInternal] internal HashSet<string> _tags = [];
     

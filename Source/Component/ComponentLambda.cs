@@ -1,6 +1,7 @@
 namespace OsmiumNucleus;
 
 
+#nullable enable
 public abstract partial class Component
 {
     
