@@ -1,131 +1,102 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
 
 namespace OsmiumNucleus;
 
 
+
+/// <summary> Handles all Osmium Debugging! Writes to a file in the same directory as the running assembly! </summary>
 public static class Debug
 {
-        
-        
-        
-    /// <summary>
-    /// True path of the log file Osmium dumps to.
-    /// </summary>
-    public static string LogFilePath { get; private set; }
-        
-        
-        
-    /// <summary>
-    /// Target name of the log file
-    /// </summary>
-    public static string LogFileName { get; private set; } = "Log";
 
 
+
+    /// <summary> True path of the log file Osmium dumps to. </summary>
+    public static readonly string LogFilePath;
         
-    /// <summary>
-    /// If this is running or not
-    /// </summary>
-    private static bool Running = false;
+        
+        
+    /// <summary> Target name of the log file </summary>
+    public const string LogFileName = "Log";
         
         
         
     //Whether to throw error exceptions
     public static bool ThrowExceptions { get; set; } = false;
-    //Whether to ignore/pass through errors or not
-    public static bool IgnoreErrors { get; set; } = false;
     //Whether to debug errors at all
     public static bool DebugErrors { get; set; } = true;
+    //Whether to write to console
+    public static bool WriteToConsole { get; set; } = true;
+    //Whether to write to file
+    public static bool WriteToFile { get; set; } = true;
         
         
         
+    /// <summary> The safety level of the Debugger</summary>
     public static SafetyLevel safetyLevel {
         get => _safetyLevel; 
         set {
             ThrowExceptions = value is SafetyLevel.Extreme;
-            IgnoreErrors = value is SafetyLevel.Low or SafetyLevel.None;
             DebugErrors = value is not SafetyLevel.None;
             _safetyLevel = value;
         }
     } private static SafetyLevel _safetyLevel;
 
+    
+    
+    /// <summary> Represents the safety level of Osmium! Set to normal by default. </summary>
     public enum SafetyLevel {
         Extreme, //Throw exceptions and stop the whole program
-        Normal, //Just debug it to the console, and halt current process
+        Normal, //Just debug it to the file, and try to exit safely. 
         Low, //Push through tasks but debug error
         None, //Ignore most/all errors and do not debug it,
     }
         
         
         
-    /// <summary>
-    /// Sets up the Osmium debugger and finds the log file.
-    /// </summary>
+    /// <summary> Finds the target debug file and saves it's path.</summary>
     static Debug() {
-
-        Running = true;
-            
-        string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        if(directoryPath == null) throw new Exception("Failed to get directory path!");
-            
+        string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
         LogFilePath = Path.Join(directoryPath, LogFileName + ".awlf");
-            
-        if(!Directory.GetFiles(directoryPath).Contains(LogFileName + ".awlf")) { File.Create(LogFilePath).Close(); }
     }
 
-    public static void Stop() {
-        Running = false;
-    }
-
-    public static void LogAction(string __message) {
-        LogGeneric(__message, "ACT", [], [], false);
-    }
-        
-    public static void LogAction(string __message, IEnumerable<string> __values, IEnumerable<string> __args) {
-        LogGeneric(__message, "ACT", __values, __args, false);
-    }
-        
-        
-        
-    public static void LogWarning(string __message) {
-        LogGeneric(__message, "WRN", [], [], false);
-    }
     
-    public static void LogWarning(string __message, IEnumerable<string> __values, IEnumerable<string> __args) {
-        LogGeneric(__message, "WRN", __values, __args, false);;
-    }
-        
-        
-        
-    public static void LogError(string __message) {
-        LogGeneric(__message, "ERR", [], [], true);
-    }
     
-    public static void LogError(string __message, IEnumerable<string> __values, IEnumerable<string> __args) {
-        LogGeneric(__message, "ERR", __values, __args, true);
-    }
+    /// <summary> Sends an action message! </summary>
+    public static void LogAction(string __message) => LogGeneric(__message, "ACT", [], [], false);
+    /// <summary> Sends an action message! Also sends extra information in the form of objects; the first list is the names of objects to send, and the second
+    /// is the actual information at each index.</summary>
+    public static void LogAction(string __message, ICollection<string> __values, ICollection<string> __args) => LogGeneric(__message, "ACT", __values, __args, false);
+        
+        
+    /// <summary> Sends a warning message! </summary>
+    public static void LogWarning(string __message) => LogGeneric(__message, "WRN", [], [], false);
+    /// <summary> Sends a warning message! Also sends extra information in the form of objects; the first list is the names of objects to send, and the second
+    /// is the actual information at each index.</summary>
+    public static void LogWarning(string __message, ICollection<string> __values, ICollection<string> __args) => LogGeneric(__message, "WRN", __values, __args, false);
+        
+        
+    
+    /// <summary> Sends an error message! </summary>
+    public static void LogError(string __message) => LogGeneric(__message, "ERR", [], [], true);
+    /// <summary> Sends an error message! Also sends extra information in the form of objects; the first list is the names of objects to send, and the second
+    /// is the actual information at each index.</summary>
+    public static void LogError(string __message, ICollection<string> __values, ICollection<string> __args) => LogGeneric(__message, "ERR", __values, __args, true);
 
 
-    /// <summary>
-    /// Writes the current message to the log file. With any given call sign.
-    /// </summary>
-    /// <param name="__message"> Message to debug</param>
-    /// <param name="__callSign"> Message identifier</param>
-    /// <param name="__parameters"> Names of values to debug</param>
-    /// <param name="__values"> Values to debug</param>
-    /// <param name="__exception"> Should this throw an exception instead</param>
-    public static void LogGeneric(string __message, string __callSign, IEnumerable<string> __parameters, IEnumerable<string> __values, bool __exception) {
-        string output = "\n\n" + __callSign + "- \"" + __message + "\"\n         STK-" + new StackTrace();
+    /// <summary>Writes the current message to the log file. With any given call sign.</summary>
+    private static void LogGeneric(string __message, string __callSign, ICollection<string> __parameters, ICollection<string> __values, bool __error) {
+        if (__values.Count != __parameters.Count) throw new Exception("Debug Parameters does not match the amount of values!");
+        
+        string output = "\n\n" + __callSign + "- \"" + __message;
+        if (__error) output += "\n         STK-" + new StackTrace();
 
-        for (int i = 0; i < __parameters.Count() || i < __values.Count(); i++)
+        for (int i = 0; i < __parameters.Count; i++)
             output += "\n         " + __parameters.ElementAt(i) + "- " + __values.ElementAt(i);
 
-        if (__exception && ThrowExceptions) throw new Exception(output);
+        if (__error && ThrowExceptions) throw new Exception(output);
             
-        File.AppendAllText(LogFilePath, output);
+        if(WriteToFile) File.AppendAllText(LogFilePath, output);
+        if(WriteToConsole) Console.WriteLine(output);
     }
 }

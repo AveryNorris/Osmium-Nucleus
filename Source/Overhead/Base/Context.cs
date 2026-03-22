@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Linq;
-using OpenTK;
-using OpenTK.Graphics.OpenGL.Compatibility;
+﻿using System.ComponentModel;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
