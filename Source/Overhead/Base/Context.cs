@@ -16,15 +16,23 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
 
     /// <summary> OnLoad() is called by OpenTK when the program starts; Calls an event called Load() in Components</summary>
     /// <remarks> It is recommended to load content during Load()</remarks>
-    protected override void OnLoad() { foreach(Scene scene in Osmium._scenes) scene.ChainEvent(0); base.OnLoad(); }
-    
+    protected override void OnLoad() {
+        foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(0);
+        
+        base.OnLoad(); 
+    }
 
-    
-    
-    
+
+
+
+
     /// <summary> OnClosing() is called by OpenTK when the program closes; Calls an event called Unload() in Components</summary>
     /// <remarks> Sometimes Unload() may not call due to a force-close!</remarks>
-    protected override void OnClosing(CancelEventArgs __args) { foreach(Scene scene in Osmium._scenes) scene.ChainEvent(1); base.OnClosing(__args); }
+    protected override void OnClosing(CancelEventArgs __args) {
+        foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(1); 
+        
+        base.OnClosing(__args);
+    }
 
 
     
@@ -34,7 +42,9 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     /// <remarks> This is where you put your main logic!</remarks>
     protected override void OnUpdateFrame(FrameEventArgs __args) {
         Osmium.DeltaTime = __args.Time;
-        foreach(Scene scene in Osmium._scenes) scene.ChainEvent(2); base.OnUpdateFrame(__args);
+        foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(2); 
+        
+        base.OnUpdateFrame(__args);
     }
     
     
@@ -45,7 +55,9 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     /// <remarks> If you have Drawing logic you should put it in here!</remarks>
     protected override void OnRenderFrame(FrameEventArgs __args) {
         Osmium.DeltaTime = __args.Time;
-        foreach(Scene scene in Osmium._scenes) scene.ChainEvent(3); base.OnRenderFrame(__args);
+        foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(3); 
+        
+        base.OnRenderFrame(__args);
     }
     
     

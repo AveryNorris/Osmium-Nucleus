@@ -43,7 +43,7 @@ public abstract partial class Component : ComponentDocker
             if(value is < -64 or > 63) { Debug.LogError("Priority cannot be set to any integer larger than 63 or less than -64!"); return; }
             
             OrderProfile = (byte)((OrderProfile & 128) | (value & 127));
-            Parent.UpdatePriority(this, value);
+            Parent.UpdatePriority(this);
         }
     }
     
