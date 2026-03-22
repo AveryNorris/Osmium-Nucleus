@@ -1,8 +1,6 @@
 namespace OsmiumNucleus;
 
-/// <summary>
-/// Main class of Osmium, allows you to Create() scenes and Initialize() the game
-/// </summary>
+/// <summary> Main class of Osmium, allows you to Create() scenes and Initialize() the game </summary>
 /// <author> Avery Norris </author>
 public static class Osmium
 {
@@ -16,6 +14,9 @@ public static class Osmium
 
     /// <summary> Bottom class of Osmium. Contains the OpenTK Instance. </summary>
     public static Context Context { get; private set; }
+    /// <summary> The amount of time since the last type of a frame event. For instance if Draw was just called, DeltaTime would currently reflect the time since the
+    /// last DRAW call, even though there was an Update call in between. Use this for framerate independent logic!</summary>
+    public static double DeltaTime { get; internal set; } = 0;
 
     
     
@@ -61,11 +62,19 @@ public static class Osmium
         Debug.LogAction("Beginning Update Loop!");
         Context.Run();
     }
-    
-    
-    
+
+
+
     /// <summary> Closes Osmium! </summary>
-    public static void Close() => Context.Close();
+    public static void Close() {
+        if(!IsStarted) { Debug.LogError("Osmium has not been Started yet!"); return; }
+        if(!IsRunning) { Debug.LogError("Osmium is already not Running!"); return; }
+        
+        IsRunning = false;
+        IsStarted = false;
+        
+        Context.Close();
+    }
 
     
     
@@ -74,9 +83,10 @@ public static class Osmium
     /// <summary> Creates a new Scene with the given name </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static Scene AddScene(string __name) {
-        if (!Guard.NotNull(__name)) return null;
-        if (!Guard.SceneDoesntExist(GetScene(__name))) return null;
-        
+        if(!IsStarted) { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
+        if (__name == null) { Debug.LogError("A Scene cannot have a null name!"); return null; }
+        if (ContainsScene(__name)) { Debug.LogError("A Scene with the given name already Exists!"); return null; }
+
         Scene newScene = new (__name);
         _scenes.Add(newScene);
         return newScene;
@@ -88,8 +98,9 @@ public static class Osmium
     /// <param name="__scene"></param>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static void AddScene(Scene __scene) {
-        if (!Guard.SceneNotNull(__scene)) return;
-        if (!Guard.SceneDoesntExist(__scene)) return;
+        if(!IsStarted) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if (__scene == null) { Debug.LogError("The given Scene is null!"); return; };
+        if (ContainsScene(__scene.Name)) { Debug.LogError("A Scene with the given name already Exists!"); return; }
         
         _scenes.Add(__scene);
     }
@@ -97,22 +108,35 @@ public static class Osmium
 
 
     /// <summary> Finds a Scene from a given name </summary>
-    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public static Scene GetScene(string __name) => !Guard.NotNull(__name) ? null : _scenes.FirstOrDefault(scene => scene.Name == __name, null);
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium),
+     MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
+    public static Scene GetScene(string __name) {
+        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
+        if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return null; }
+        
+        return _scenes.FirstOrDefault(scene => scene.Name == __name);
+    }
 
 
 
     /// <summary> Returns bool based on whether there a scene with the given name or not. </summary>
-    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public static bool ContainsScene(string __name) => Guard.NotNull(__name) && _scenes.Any(scene => scene.Name == __name);
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium),
+     MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
+    public static bool ContainsScene(string __name) {
+        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return false; }
+        if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return false; }
+        
+        return _scenes.Any(scene => scene.Name == __name);
+    }
 
 
 
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void RemoveScene(Scene __scene) {
-        if(!Guard.NotNull(__scene)) return;
-        if(!Guard.SceneExists(__scene.Name)) return;
+        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(__scene == null) { Debug.LogError("A given scene cannot be null!"); return; }
+        if(!ContainsScene(__scene.Name)) { Debug.LogError("The given scene does not exist!"); return; }
         
         _scenes.Remove(__scene);
     }
@@ -122,8 +146,9 @@ public static class Osmium
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void RemoveScene(string __name) {
-        if(!Guard.NotNull(__name)) return;
-        if(!Guard.SceneExists(__name)) return;
+        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return; }
+        if(!ContainsScene(__name)) { Debug.LogError("The given scene does not exist!"); return; }
 
         _scenes.Remove(GetScene(__name));
     }

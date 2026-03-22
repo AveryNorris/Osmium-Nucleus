@@ -1,30 +1,29 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using OsmiumNucleus;
 
 
 namespace OsmiumNucleus;
 
 
-/// <summary>
-/// Registers events for component type objects.
-/// </summary>
+/// <summary>Registers and manages events for component type objects. </summary>
 /// <author> Avery Norris </author>
 internal static class EventManager
 {
+    
+    
+    
     /// <summary> Holds an associated action for each component and a time event. Is built with CompileType() during Initialize().</summary>
     [MarkerAttributes.UnsafeInternal]
     internal static Dictionary<Type, Action<Component>[]> _TypeAssociatedTimeEvents = [];
+    
     
     
     /// <summary> All types of time based events in Osmium.</summary>
     internal static readonly ImmutableArray<string> Events = [
         "Load", "Unload", "Update", "Draw", "Create", "Remove", //NORMAL Osmium RELATED EVENTS
     ];
+    
     
     
     /// <summary> Compiles a single type, and stores its events in the dictionary.</summary>

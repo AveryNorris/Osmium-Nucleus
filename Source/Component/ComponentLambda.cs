@@ -12,6 +12,11 @@ public abstract partial class Component
     
     
     
+    /// <inheritdoc cref="Osmium.DeltaTime"/>
+    public static double DeltaTime => Osmium.DeltaTime;
+    
+    
+    
     /// <inheritdoc cref="Osmium._scenes"/>
     [MarkerAttributes.VariablePointer]
     public static IReadOnlySet<Scene> Scenes => Osmium._scenes;

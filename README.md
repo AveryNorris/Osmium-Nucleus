@@ -10,4 +10,3 @@
 ---
 
 Osmium is a **Low-Level** C# Game Framework! Dedicated to making Games from Near Scratch!
-

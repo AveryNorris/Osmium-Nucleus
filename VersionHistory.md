@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Osmium.png" width="150px" style="image-rendering: pixelated; align-content: center;" alt="OsmiumLogo">
+</p>
+
 # Osmium V0.1!
 
 ### Made by Avery Norris! 
@@ -47,3 +51,12 @@ Finished Reflection, and Osmium is MUCH faster.
 ---
 
 Osmium is nearly in a ready to deploy state! Aside from documentation and on the side support.
+
+# V1.0!!
+
+### March 21 2026
+
+---
+
+After a very long time; Osmium is ready to go! All scripts have been reviewed and checked. Also Osmium was renamed, Orignally it was named
+**Awperative** but it's cool now :).

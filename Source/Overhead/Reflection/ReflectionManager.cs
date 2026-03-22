@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using OsmiumNucleus;
+
 
 
 namespace OsmiumNucleus;
 
 
-/// <summary>
-/// Manages all Osmium reflection based activities, right now limited to registering events.
-/// </summary>
+/// <summary>Manages all Osmium reflection based activities, right now limited to registering events.</summary>
 /// <author> Avery Norris </author>
 internal static class ReflectionManager
 {
@@ -24,8 +20,6 @@ internal static class ReflectionManager
     /// <summary> Resolves all the types in an assembly.</summary>
     [MarkerAttributes.UnsafeInternal]
     internal static void ResolveModule(Assembly __assembly) {
-        foreach (Type type in __assembly.GetTypes()) {
-            EventManager.CompileType(type);
-        }
+        foreach (Type type in __assembly.GetTypes()) EventManager.CompileType(type);
     }
 }
