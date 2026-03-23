@@ -18,3 +18,15 @@ Osmium is a **Low-Level** C# Game Framework! Dedicated to making Games from Near
   A Context to a Rendering, Input, Sound etc. Library.
 
 Extensions that provide functionality are called **Modules**. A few example modules include, Renderers, Audio Systems, and Input Systems. Feel free to make whatever modules you see fit; or fork the Nucleus!
+
+# Usage
+
+Using Osmium is **simple**! You can either **Download the code** and Compile it yourself! Or you can use Nuget to download it under the name "OsmiumNucleus"!
+
+# Requirements
+
+A system that can run OpenTK (so basically all of them, Windows, Mac, Linux)
+
+# Documentation
+
+For documentation, please refer to the .md files inside subfolders from Source! A wiki is on its way :)
