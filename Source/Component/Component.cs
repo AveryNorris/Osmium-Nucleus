@@ -29,29 +29,30 @@ public abstract partial class Component : ComponentDocker
     /// <summary> If the component receives time events or not. </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public bool Enabled {
-        get => (OrderProfile & 128) > 0;
-        set => OrderProfile = (byte) ((OrderProfile & 127) | (value ? 128 : 0));
+        get => OrderProfile >= 0;
+        set {
+            if (Enabled != value) OrderProfile *= -1;
+        }
     }
     
     
     
-    /// <summary> Represents the Component's Update priority; higher priorities get updated first. Can be any integer in the range -64 -> 63. Easy to calculate, but when set, it must resort all Components. </summary>
+    /// <summary> Represents the Component's Update priority; higher priorities get updated first. Can be any integer in the range -63 -> 63. Easy to calculate, but when set, it must resort all Components. </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.High), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public int Priority {
-        get => (sbyte)(OrderProfile << 1) >> 1;
+        get => Math.Abs(OrderProfile) - 64;
         set {
-            if(value is < -64 or > 63) { Debug.LogError("Priority cannot be set to any integer larger than 63 or less than -64!"); return; }
-            
-            OrderProfile = (byte)((OrderProfile & 128) | (value & 127));
+            if(value is < -63 or > 63) { Debug.LogError("Priority cannot be set to any integer larger than 63 or less than -64!"); return; }
+
+            OrderProfile = (sbyte) (Enabled ? value + 64 : (value + 64) * -1);
             Parent.UpdatePriority(this);
         }
     }
     
     
     
-    /// <summary> Represents the state of this Component, The largest bit represents if the Component is enabled or not, while the
-    /// next 7 represent its priority like so : (Enabled -> 0 | Priority -> 0000000) </summary>
-    [MarkerAttributes.UnsafeInternal] private byte OrderProfile = 128;
+    /// <summary> Represents the state of this Component, if it is negative then it is a disabled component, and the abs of the value represents the update priority of the Component </summary>
+    [MarkerAttributes.UnsafeInternal] private sbyte OrderProfile = 64;
 
     #endregion Tags
     
