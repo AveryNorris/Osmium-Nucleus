@@ -51,7 +51,7 @@ public abstract partial class Component : ComponentDocker
     
     /// <summary> Represents the state of this Component, The largest bit represents if the Component is enabled or not, while the
     /// next 7 represent its priority like so : (Enabled -> 0 | Priority -> 0000000) </summary>
-    [MarkerAttributes.UnsafeInternal] private byte OrderProfile = 0;
+    [MarkerAttributes.UnsafeInternal] private byte OrderProfile = 128;
 
     #endregion Tags
     
@@ -100,7 +100,7 @@ public abstract partial class Component : ComponentDocker
     /// <summary> Attempts to send an event to the component, and quietly exits if not.</summary>
     [MarkerAttributes.UnsafeInternal]
     internal void TryEvent(int __timeEvent) {
-        if(Enabled) EventManager._TypeAssociatedTimeEvents[GetType()][__timeEvent].Invoke(this);
+        if(Enabled) EventManager._TypeAssociatedTimeEvents[GetType()][__timeEvent]?.Invoke(this);
     }
     
 

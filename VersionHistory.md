@@ -60,3 +60,22 @@ Osmium is nearly in a ready to deploy state! Aside from documentation and on the
 
 After a very long time; Osmium is ready to go! All scripts have been reviewed and checked. Also Osmium was renamed, Orignally it was named
 **Awperative** but it's cool now :).
+
+# V1.0.1
+
+### March 22 2026
+
+---
+
+Fixed Minor Debugging Issues, and Scenes not being enabled by default
+
+
+# V1.0.2
+
+### March 22 2026
+
+---
+
+Refactored IsStarted(), minor Debugger adjustments, and fixed Components not being enabled by Default.
+Also, TryEvent() did not have null catches. Causing any Component without Start() and Create() to Immediately Throw
+

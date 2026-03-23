@@ -30,6 +30,8 @@ internal static class EventManager
     [MarkerAttributes.UnsafeInternal]
     internal static void CompileType(Type __type) {
         if (!__type.IsSubclassOf(typeof(Component))) return;
+        
+        Debug.LogAction("Compiling Component " + __type.Name + " In " + __type.Namespace);
 
 
         List<Action<Component>> timeEvents = [];

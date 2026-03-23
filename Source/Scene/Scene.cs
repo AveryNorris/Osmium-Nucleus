@@ -8,7 +8,7 @@ public class Scene(string __name) : ComponentDocker
 {
 
     /// <summary> Whether the Scene is capturing events or not </summary>
-    public bool Enabled;
+    public bool Enabled = true;
     
     
     

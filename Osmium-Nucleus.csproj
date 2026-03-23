@@ -1,9 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>OsmiumNucleus</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>OsmiumNucleus</PackageId>
+        <Version>1.0.2</Version>
+        <Authors>Avery Norris</Authors>
+        <Description>The sourcing class for the Osmium game framework!</Description>
     </PropertyGroup>
 
     <ItemGroup>

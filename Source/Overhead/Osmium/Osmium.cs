@@ -27,7 +27,7 @@ public static class Osmium
 
     
     /// <summary> Displays if Osmium has Started or not </summary>
-    public static bool IsStarted { get; private set; } = false;
+    public static bool IsInitialized { get; private set; } = false;
     /// <summary> Displays if the update loop is active</summary>
     public static bool IsRunning { get; private set; } = false;
     
@@ -38,9 +38,9 @@ public static class Osmium
     /// <summary> Gets Osmium ready to begin and Compiles Component functions. Please call before doing anything Osmium related! </summary>
     public static void Initialize() {
         if (IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
-        if (IsStarted) { Debug.LogError("Osmium has already Started!"); return; }
+        if (IsInitialized) { Debug.LogError("Osmium has already Started!"); return; }
         
-        IsStarted = true;
+        IsInitialized = true;
         
         //initialize here to allow any required access before Run()
         Context = new Context();
@@ -54,7 +54,7 @@ public static class Osmium
     
     /// <summary> Starts Osmium up! This method runs until the game is closed. </summary>
     public static void Run() {
-        if(!IsStarted) { Debug.LogError("Osmium has not been Started yet!"); return; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Started yet!"); return; }
         if(IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
         
         IsRunning = true;
@@ -67,11 +67,11 @@ public static class Osmium
 
     /// <summary> Closes Osmium! </summary>
     public static void Close() {
-        if(!IsStarted) { Debug.LogError("Osmium has not been Started yet!"); return; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Started yet!"); return; }
         if(!IsRunning) { Debug.LogError("Osmium is already not Running!"); return; }
         
         IsRunning = false;
-        IsStarted = false;
+        IsInitialized = false;
         
         Context.Close();
     }
@@ -83,7 +83,7 @@ public static class Osmium
     /// <summary> Creates a new Scene with the given name </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static Scene AddScene(string __name) {
-        if(!IsStarted) { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
         if (__name == null) { Debug.LogError("A Scene cannot have a null name!"); return null; }
         if (ContainsScene(__name)) { Debug.LogError("A Scene with the given name already Exists!"); return null; }
 
@@ -98,7 +98,7 @@ public static class Osmium
     /// <param name="__scene"></param>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public static void AddScene(Scene __scene) {
-        if(!IsStarted) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
         if (__scene == null) { Debug.LogError("The given Scene is null!"); return; };
         if (ContainsScene(__scene.Name)) { Debug.LogError("A Scene with the given name already Exists!"); return; }
         
@@ -111,7 +111,7 @@ public static class Osmium
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium),
      MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static Scene GetScene(string __name) {
-        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
+        if(!IsInitialized)  { Debug.LogError("Osmium has not been Initialized yet!"); return null; }
         if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return null; }
         
         return _scenes.FirstOrDefault(scene => scene.Name == __name);
@@ -123,7 +123,7 @@ public static class Osmium
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium),
      MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static bool ContainsScene(string __name) {
-        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return false; }
+        if(!IsInitialized)  { Debug.LogError("Osmium has not been Initialized yet!"); return false; }
         if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return false; }
         
         return _scenes.Any(scene => scene.Name == __name);
@@ -134,7 +134,7 @@ public static class Osmium
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void RemoveScene(Scene __scene) {
-        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(!IsInitialized)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
         if(__scene == null) { Debug.LogError("A given scene cannot be null!"); return; }
         if(!ContainsScene(__scene.Name)) { Debug.LogError("The given scene does not exist!"); return; }
         
@@ -146,7 +146,7 @@ public static class Osmium
     /// <summary> Closes a Scene </summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public static void RemoveScene(string __name) {
-        if(!IsStarted)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(!IsInitialized)  { Debug.LogError("Osmium has not been Initialized yet!"); return; }
         if(__name == null) { Debug.LogError("A Scene cannot have a null name!"); return; }
         if(!ContainsScene(__name)) { Debug.LogError("The given scene does not exist!"); return; }
 

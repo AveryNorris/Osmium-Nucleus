@@ -58,6 +58,8 @@ public static class Debug
     static Debug() {
         string directoryPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
         LogFilePath = Path.Join(directoryPath, LogFileName + ".awlf");
+        
+        File.WriteAllText(LogFilePath, "");
     }
 
     
@@ -88,7 +90,7 @@ public static class Debug
     private static void LogGeneric(string __message, string __callSign, ICollection<string> __parameters, ICollection<string> __values, bool __error) {
         if (__values.Count != __parameters.Count) throw new Exception("Debug Parameters does not match the amount of values!");
         
-        string output = "\n\n" + __callSign + "- \"" + __message;
+        string output = "\n\n" + __callSign + "- \"" + __message + '\"';
         if (__error) output += "\n         STK-" + new StackTrace();
 
         for (int i = 0; i < __parameters.Count; i++)
