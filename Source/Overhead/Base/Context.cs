@@ -9,7 +9,7 @@ namespace OsmiumNucleus;
 
 /// <summary> Bottom class of Osmium. Carries events from MonoGame into Scenes, and provides OpenTK context.</summary>
 /// <author> Avery Norris </author>
-public sealed class Context() : GameWindow(GameWindowSettings.Default, new NativeWindowSettings() { })
+public sealed class Context() : GameWindow(GameWindowSettings.Default, new NativeWindowSettings())
 {
     
     
