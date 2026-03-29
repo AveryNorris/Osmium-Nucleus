@@ -1,7 +1,11 @@
+using System.Reflection;
+
+
 namespace OsmiumNucleus;
 
 /// <summary> Main class of Osmium, allows you to Create() scenes and Initialize() the game </summary>
 /// <author> Avery Norris </author>
+#nullable enable
 public static class Osmium
 {
 
@@ -13,7 +17,7 @@ public static class Osmium
 
 
     /// <summary> Bottom class of Osmium. Contains the OpenTK Instance. </summary>
-    public static Context Context { get; private set; }
+    public static Context? Context { get; private set; }
     /// <summary> The amount of time since the last type of a frame event. For instance if Draw was just called, DeltaTime would currently reflect the time since the
     /// last DRAW call, even though there was an Update call in between. Use this for framerate independent logic!</summary>
     public static double DeltaTime { get; internal set; } = 0;
@@ -47,14 +51,69 @@ public static class Osmium
 
         ReflectionManager.ResolveAllModules();
         
-        Debug.LogAction("Successfully Started Osmium!");
+        Debug.LogAction("Successfully Initialized Osmium!");
+    }
+    
+    
+    
+    /// <summary> Quietly initializes Osmium and simply creates a context, this is for the editor only, to allow running Osmium virtually! </summary>
+    [MarkerAttributes.EditorPipeline]
+    public static void EditorInitialize() {
+        if (IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
+        if (IsInitialized) { Debug.LogError("Osmium has already Started!"); return; }
+        
+        IsInitialized = true;
+        
+        Context = new Context();
+        
+        Debug.LogAction("Successfully Initialized Osmium!");
+    }
+    
+    
+    
+    /// <summary> Pretends to initialize Osmium.</summary>
+    [MarkerAttributes.EditorPipeline]
+    public static void VirtualInitialize(IEnumerable<Assembly> __assemblies) {
+        IsInitialized = true;
+        
+        ReflectionManager.ResolveAllModules(__assemblies);
+    }
+    
+    
+    
+    /// <summary> Pretends to run the game </summary>
+    [MarkerAttributes.EditorPipeline]
+    public static void VirtualRun() {
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
+        
+        IsRunning = true;
+        
+        //send a fake load call to simulate loading
+        foreach (Scene scene in Scenes) scene.ChainEvent(0); 
+    }
+    
+    
+    
+    /// <summary> Pretends to close Osmium. </summary>
+    [MarkerAttributes.EditorPipeline]
+    public static void VirtualClose() {
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
+        if(!IsRunning) { Debug.LogError("Osmium is already not Running!"); return; }
+        
+        foreach (Scene scene in Scenes) scene.ChainEvent(1); 
+        
+        IsInitialized = false;
+        IsRunning = false;
+        
+        EventManager._TypeAssociatedTimeEvents.Clear();
     }
     
     
     
     /// <summary> Starts Osmium up! This method runs until the game is closed. </summary>
     public static void Run() {
-        if(!IsInitialized) { Debug.LogError("Osmium has not been Started yet!"); return; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
         if(IsRunning) { Debug.LogError("Osmium is already Running!"); return; }
         
         IsRunning = true;
@@ -67,7 +126,7 @@ public static class Osmium
 
     /// <summary> Closes Osmium! </summary>
     public static void Close() {
-        if(!IsInitialized) { Debug.LogError("Osmium has not been Started yet!"); return; }
+        if(!IsInitialized) { Debug.LogError("Osmium has not been Initialized yet!"); return; }
         if(!IsRunning) { Debug.LogError("Osmium is already not Running!"); return; }
         
         IsRunning = false;

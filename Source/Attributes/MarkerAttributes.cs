@@ -73,4 +73,10 @@ public static class MarkerAttributes
     /// <summary> Shows that the given variable does not actually belong to the object, but instead just calls a lambda to another method. </summary>
     [AttributeUsage(AttributeTargets.All)]
     public class VariablePointer : Attribute { }
+    
+    
+    
+    /// <summary> Shows that the given variable or function is required for the editor pipeline </summary>
+    [AttributeUsage(AttributeTargets.All)]
+    public class EditorPipeline : Attribute { }
 }

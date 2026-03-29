@@ -5,6 +5,7 @@ public abstract partial class ComponentDocker
 {
 
 
+    
     /// <summary> Creates a new instance of that type of component and attaches it to the docker, then returns a reference to it.</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]
     public __Type Add<__Type>(string? name = null, ICollection<string>? tags = null, int priority = 0, bool enabled = true) where __Type : Component, new() {
@@ -15,6 +16,14 @@ public abstract partial class ComponentDocker
 
         InitiateComponent(newComponent, name, tags.ToHashSet(), priority, enabled);
         return (__Type)newComponent;
+    }
+    
+    
+    /// <summary> Adds a custom component type and does not call any create events. This is for the editor!</summary>
+    [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1), MarkerAttributes.EditorPipeline]
+    public void Add(Component __component) {
+        __component.Parent = this; 
+        AddComponentToLists(__component);
     }
 
 

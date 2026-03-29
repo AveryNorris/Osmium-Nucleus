@@ -79,3 +79,19 @@ Fixed Minor Debugging Issues, and Scenes not being enabled by default
 Refactored IsStarted(), minor Debugger adjustments, and fixed Components not being enabled by Default.
 Also, TryEvent() did not have null catches. Causing any Component without Start() and Create() to Immediately Throw
 
+# V1.1.0
+
+### March 29 2026
+
+---
+
+Added some rusty Virtualization support because it was required for the **Radium Editor**. Virtualization allows Osmium to start, but not compile any types. And
+then pretend to initialize for the first time. This allows you to perfectly simulate starting osmium and running a game without actually reloading the Context.
+
+# V1.1.1
+
+### March 29 2026
+
+---
+
+Small bugfix! Is initialized wasn't set by editor initialize!
