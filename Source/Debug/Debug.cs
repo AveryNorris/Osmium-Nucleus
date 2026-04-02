@@ -13,9 +13,9 @@ public static class Debug
 
     /// <summary> True path of the log file Osmium dumps to. </summary>
     public static readonly string LogFilePath;
-        
-        
-        
+    
+    
+    
     /// <summary> Target name of the log file </summary>
     public const string LogFileName = "Log";
         
@@ -26,10 +26,14 @@ public static class Debug
     //Whether to debug errors at all
     public static bool DebugErrors { get; set; } = true;
     //Whether to write to console
-    public static bool WriteToConsole { get; set; } = true;
+    public static bool WriteToConsole { get; set; } = false;
     //Whether to write to file
-    public static bool WriteToFile { get; set; } = true;
-        
+    public static bool WriteToFile { get; set; } = false;
+    
+    //output of the console
+    private static List<string> _debugTable = [];
+    
+    public static IReadOnlyList<string> Output => _debugTable;
         
         
     /// <summary> The safety level of the Debugger</summary>
@@ -60,6 +64,10 @@ public static class Debug
         LogFilePath = Path.Join(directoryPath, LogFileName + ".awlf");
         
         File.WriteAllText(LogFilePath, "");
+        
+        //always write to console if WriteToConsole is true, but don't set it to false if there isn't a direct console.
+        if(Console.IsOutputRedirected)
+            WriteToConsole = true;
     }
 
     
@@ -100,5 +108,16 @@ public static class Debug
             
         if(WriteToFile) File.AppendAllText(LogFilePath, output);
         if(WriteToConsole) Console.WriteLine(output);
+        
+        _debugTable.Add(output);
+    }
+
+
+
+    public static void Clear() {
+        if(WriteToFile) File.WriteAllText(LogFilePath, "");
+        if(WriteToConsole) Console.Clear();
+        
+        _debugTable.Clear();
     }
 }

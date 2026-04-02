@@ -95,3 +95,11 @@ then pretend to initialize for the first time. This allows you to perfectly simu
 ---
 
 Small bugfix! Is initialized wasn't set by editor initialize!
+
+# V1.1.2
+
+### April 1 2026
+
+---
+
+Documentation rework! And small optimizations

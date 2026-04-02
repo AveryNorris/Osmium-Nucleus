@@ -10,6 +10,8 @@ namespace OsmiumNucleus;
 /// <author> Avery Norris </author>
 public static class MarkerAttributes
 {
+ 
+    
     
     /// <summary> Shows that the given object is unsafe (ex. it doesn't check for null values and such, or it doesn't have guardrails based on cases).
     /// This is just for internal/private methods to remind myself how to call it :) The reasoning is case by case, but most of the time,
@@ -61,22 +63,25 @@ public static class MarkerAttributes
         
         public TimeComplexity complexity = __complexity;
     }
-    
-    
-    
+
+
+
     /// <summary> Shows that the given method does not actually belong to the object, but instead just calls a lambda to another method. </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public class MethodPointer : Attribute { }
-    
-    
-    
+    public class MethodPointer : Attribute;
+
+
+
     /// <summary> Shows that the given variable does not actually belong to the object, but instead just calls a lambda to another method. </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public class VariablePointer : Attribute { }
-    
-    
-    
+    public class VariablePointer : Attribute;
+
+
+
     /// <summary> Shows that the given variable or function is required for the editor pipeline </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public class EditorPipeline : Attribute { }
+    public class EditorPipeline : Attribute;
+
+
+
 }
