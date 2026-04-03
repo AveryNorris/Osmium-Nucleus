@@ -15,11 +15,13 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     
     //Blocks external inheritance
     internal ComponentDocker() {}
-    
-    
-    
-    /// <summary> Core of the Docker, holds all the Components, sorted by update priority.</summary>
+
+
+
+    /// <summary> Core of the Docker, holds all the Components.</summary>
     [MarkerAttributes.UnsafeInternal] internal readonly List<Component> _components = [];
+    /// <summary> Holds all the Components sorted by priority. This optimizes priority changes</summary>
+    [MarkerAttributes.UnsafeInternal] internal readonly SortedDictionary<int, HashSet<Component>> _componentPriorityDictionary = [];
     /// <summary> Holds a list of Components at each of their types. This optimizes Get&lt;Type&gt; to O(1) </summary>
     [MarkerAttributes.UnsafeInternal] internal readonly Dictionary<Type, HashSet<Component>> _componentTypeDictionary = new();
     /// <summary> Stores a Component in a list at each of their tags. This optimizes Get(string tag) to O(1)</summary>
@@ -33,10 +35,17 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
         return (result != 0) ? result : a.GetHashCode().CompareTo(b.GetHashCode());
     });
 
-    /// <summary> Resorts the component list to order of priority </summary>
+    /// <summary> Resorts the component list to order of priority, assumes that old and new priority are different! </summary>
     [MarkerAttributes.UnsafeInternal]
-    internal void UpdatePriority(Component __component) {
-        _components.Sort(Component._prioritySorter);
+    internal void UpdatePriority(Component __component, int __oldPriority, int __newPriority) {
+
+        if (_componentPriorityDictionary.TryGetValue(__oldPriority, out HashSet<Component>? oldPriorityComponents)) {
+            //if there is only one item or less in the list, just remove it from the dictionary as a whole since the priority of this has now changed.
+            if (oldPriorityComponents.Count > 1) oldPriorityComponents.Remove(__component);
+            else _componentPriorityDictionary.Remove(__oldPriority);
+        }
+
+        if (!_componentPriorityDictionary.TryAdd(__component.Priority, [__component])) _componentPriorityDictionary[__component.Priority].Add(__component);
     }
     
     
@@ -44,7 +53,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     
     
     /// <summary>  All children belonging to the Docker. </summary>
-    public IReadOnlyList<Component> Children => _components;
+    public IReadOnlyList<Component> Children => _components.ToList();
     
     
     
@@ -86,8 +95,9 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     
     
     //Enumerators that allow convenient foreach loops. Uses ToList() to make a new snapshot of the hashset and allow hashset modification in the loop.
-    IEnumerator IEnumerable.GetEnumerator() { return  GetEnumerator(); } 
-    public IEnumerator<Component> GetEnumerator() { return _components.ToList().GetEnumerator(); }
+    IEnumerator IEnumerable.GetEnumerator() { return  GetEnumerator(); }
+
+    public IEnumerator<Component> GetEnumerator() { return _components.GetEnumerator(); }
     
     
     
@@ -96,10 +106,12 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     [MarkerAttributes.UnsafeInternal]
     internal void ChainEvent(int __timeEvent) {
         if(this is Component { Enabled: false }) return;
-        
-        for (int i = 0; i < _components.Count; i++) {
-            _components[i].TryEvent(__timeEvent);
-            _components[i].ChainEvent(__timeEvent);
+
+        foreach(KeyValuePair<int, HashSet<Component>> ComponentPriorityValues in _componentPriorityDictionary) {
+            foreach (Component component in ComponentPriorityValues.Value) {
+                component.TryEvent(__timeEvent);
+                component.ChainEvent(__timeEvent);
+            }
         }
     }
     
@@ -110,6 +122,9 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     private void AddComponentToLists(Component __component) {
         Type Type = __component.GetType();
         _components.Add(__component); 
+        
+        if (!_componentPriorityDictionary.TryAdd(__component.Priority, [__component])) _componentPriorityDictionary[__component.Priority].Add(__component);
+        
         if (!_componentTypeDictionary.TryAdd(Type, [__component])) _componentTypeDictionary[Type].Add(__component);
 
         foreach (string tag in __component._tags) HashTaggedComponent(tag, __component);
@@ -122,6 +137,12 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     private void RemoveComponentFromLists(Component __component) {
         Type Type = __component.GetType();
         _components.Remove(__component); 
+        
+        if (_componentPriorityDictionary.TryGetValue(__component.Priority, out HashSet<Component>? oldPriorityComponents)) {
+            //if there is only one item or less in the list, just remove it from the dictionary as a whole since the priority of this has now changed.
+            if (oldPriorityComponents.Count > 1) oldPriorityComponents.Remove(__component);
+            else _componentPriorityDictionary.Remove(__component.Priority);
+        }
         
         if(_componentTypeDictionary.TryGetValue(Type, out HashSet<Component> value)) value.Remove(__component);
         

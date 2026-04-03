@@ -21,7 +21,7 @@ public abstract partial class ComponentDocker
         
 
     /// <summary> Moves all components in a list to another docker</summary>
-    public void MoveAll(ICollection<Component> __Components, ComponentDocker __componentDocker) {
+    public void MoveAll(IEnumerable<Component> __Components, ComponentDocker __componentDocker) {
         if(__Components == null) { Debug.LogError("Components cannot be null!"); return; }
         if(__componentDocker == null) { Debug.LogError("Docker cannot be null!"); return; }
         if(__componentDocker == this) { Debug.LogError("A Component cannot move to a Docker it already belongs to!"); return; }

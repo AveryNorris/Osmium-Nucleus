@@ -42,7 +42,7 @@ public abstract partial class ComponentDocker
 
     /// <summary> Tells you whether the docker contains the all the given components.</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public bool ContainsAll(ICollection<Component> __components) => __components.All(x => _components.Contains(x));
+    public bool ContainsAll(IEnumerable<Component> __components) => __components.All(x => _components.Contains(x));
     
 
 

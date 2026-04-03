@@ -12,6 +12,7 @@ public abstract partial class Component : ComponentDocker
     /// <summary> Current parent of the Component. Can be either a Scene or another Component.</summary>
     [MarkerAttributes.UnsafeInternal] public ComponentDocker Parent { get; internal set; }
     
+    
     #region Component Information
     
     /// <summary> The Component's name </summary>
@@ -44,8 +45,8 @@ public abstract partial class Component : ComponentDocker
         set {
             if(value is < -63 or > 63) { Debug.LogError("Priority cannot be set to any integer larger than 63 or less than -64!"); return; }
 
+            Parent.UpdatePriority(this, Priority, value);
             OrderProfile = (sbyte) (Enabled ? value + 64 : (value + 64) * -1);
-            Parent.UpdatePriority(this);
         }
     }
     
@@ -53,6 +54,8 @@ public abstract partial class Component : ComponentDocker
     
     /// <summary> Represents the state of this Component, if it is negative then it is a disabled component, and the abs of the value represents the update priority of the Component </summary>
     [MarkerAttributes.UnsafeInternal] private sbyte OrderProfile = 64;
+    
+    
 
     #endregion Tags
     
@@ -101,7 +104,12 @@ public abstract partial class Component : ComponentDocker
     /// <summary> Attempts to send an event to the component, and quietly exits if not.</summary>
     [MarkerAttributes.UnsafeInternal]
     internal void TryEvent(int __timeEvent) {
-        if(Enabled) EventManager._TypeAssociatedTimeEvents[GetType()][__timeEvent]?.Invoke(this);
+        if (!Enabled) return;
+
+        Type type = GetType();
+        if (EventManager._TypeAssociatedVirtualEventPrivileges[type] || Osmium.IsRunning) {
+            EventManager._TypeAssociatedTimeEvents[type][__timeEvent]?.Invoke(this);
+        }
     }
     
 

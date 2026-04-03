@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -17,7 +18,13 @@ internal static class EventManager
     /// There is little to no error checking; it is assumed that any Component trying to index this dictionary, at least has null at a key/value! There cannot be empty
     /// entries even if a Component receives no events. </summary>
     [MarkerAttributes.UnsafeInternal]
-    internal static Dictionary<Type, Action<Component>[]> _TypeAssociatedTimeEvents = [];
+    internal static FrozenDictionary<Type, Action<Component>[]> _TypeAssociatedTimeEvents;
+    
+    
+    
+    /// <summary> Holds an associated bool for each Component type, which tells whether they are allowed to receive events, even if Osmium is runnning virtually </summary>
+    [MarkerAttributes.UnsafeInternal]
+    internal static FrozenDictionary<Type, bool> _TypeAssociatedVirtualEventPrivileges;
     
     
     
@@ -41,33 +48,43 @@ internal static class EventManager
     /// <summary> Resolves all the components from only the given assemblies</summary>
     [MarkerAttributes.EditorPipeline]
     internal static void ResolveAllModules(IEnumerable<Assembly> __sources) {
-        foreach (Assembly assembly in __sources) foreach (Type type in assembly.GetTypes()) 
-            EventManager.ResolveTypeEvents(type);
-    }
-    
-    
-    
-    /// <summary> Compiles a single type, and stores its events in the dictionary.</summary>
-    [MarkerAttributes.UnsafeInternal]
-    internal static void ResolveTypeEvents(Type __type) {
-        if (!__type.IsSubclassOf(typeof(Component))) return;
+        
+        Dictionary<Type, Action<Component>[]> _newAssociatedTimeEvents = [];
+        Dictionary<Type, bool> _newAssociatedVirtualEventPrivileges = [];
+        
+        foreach (Assembly assembly in __sources) {
+            foreach (Type type in assembly.GetTypes()) {
+                if (!type.IsSubclassOf(typeof(Component))) continue;
 
-        List<Action<Component>> timeEvents = [];
+                List<Action<Component>> timeEvents = [];
 
-        foreach (MethodInfo eventMethod in Events.Select(__type.GetMethod)) {
-            if (eventMethod == null) { timeEvents.Add(null); continue; }
+                foreach (MethodInfo eventMethod in Events.Select(type.GetMethod)) {
+                    if (eventMethod == null) {
+                        timeEvents.Add(null);
+                        continue;
+                    }
 
-            //create a new delegate expression that calls the Components associated method.
-            ParameterExpression ComponentInstanceParameter = Expression.Parameter(typeof(Component), "__component");
-            UnaryExpression Casting = Expression.Convert(ComponentInstanceParameter, __type);
-            MethodCallExpression Call = Expression.Call(Casting, eventMethod);
-            Expression<Action<Component>> Lambda = Expression.Lambda<Action<Component>>(Call, ComponentInstanceParameter);
-            timeEvents.Add(Lambda.Compile());
+                    //create a new delegate expression that calls the Components associated method.
+                    ParameterExpression ComponentInstanceParameter =
+                            Expression.Parameter(typeof(Component), "__component");
+                    UnaryExpression Casting = Expression.Convert(ComponentInstanceParameter, type);
+                    MethodCallExpression Call = Expression.Call(Casting, eventMethod);
+                    Expression<Action<Component>> Lambda =
+                            Expression.Lambda<Action<Component>>(Call, ComponentInstanceParameter);
+                    timeEvents.Add(Lambda.Compile());
+                }
+
+
+
+                Debug.LogAction("Found and Resolved events attached to : " + type.Name + " In " + type.Namespace);
+
+                _newAssociatedTimeEvents.Add(type, timeEvents.ToArray());
+                _newAssociatedVirtualEventPrivileges.Add(type, type.GetCustomAttribute<NonVirtual>() != null);
+            }
         }
         
-        Debug.LogAction("Found and Resolved events attached to : " + __type.Name + " In " + __type.Namespace);
-
-        _TypeAssociatedTimeEvents.Add(__type, timeEvents.ToArray());
+        _TypeAssociatedTimeEvents = _newAssociatedTimeEvents.ToFrozenDictionary();
+        _TypeAssociatedVirtualEventPrivileges = _newAssociatedVirtualEventPrivileges.ToFrozenDictionary();
     }
     
     

@@ -19,13 +19,18 @@ public abstract partial class ComponentDocker
     }
     
     
+    
     /// <summary> Adds a custom component type and does not call any create events. This is for the editor!</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1), MarkerAttributes.EditorPipeline]
     public void Add(Component __component) {
         __component.Parent = this; 
         AddComponentToLists(__component);
+        
+        __component.TryEvent(4);
+        __component.ChainEvent(4);
     }
 
+    
 
     /// <summary> Initiates a component into the docker. </summary>
     [MarkerAttributes.UnsafeInternal]
@@ -83,7 +88,7 @@ public abstract partial class ComponentDocker
 
     /// <summary> Destroys all components of a given type</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Medium), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public void DestroyAll<__Type>() where __Type : Component => DestroyAll((ICollection<Component>) GetAll<__Type>());
+    public void DestroyAll<__Type>() where __Type : Component => DestroyAll(new List<Component>(GetAll<__Type>()));
 
 
 
@@ -123,4 +128,6 @@ public abstract partial class ComponentDocker
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.Low), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
     public void Destroy<__Type>(string __tag) where __Type : Component => Destroy(Get<__Type>(__tag));
 
+    
+    
 }

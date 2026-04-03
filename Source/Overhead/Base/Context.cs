@@ -19,8 +19,6 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     protected override void OnLoad() {
         base.OnLoad(); 
         
-        if (!Osmium.IsRunning) return;
-        
         foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(0);
     }
 
@@ -33,8 +31,6 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     protected override void OnClosing(CancelEventArgs __args) {
         base.OnClosing(__args);
         
-        if (!Osmium.IsRunning) return;
-        
         foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(1);
     }
 
@@ -46,8 +42,6 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     /// <remarks> This is where you put your main logic!</remarks>
     protected override void OnUpdateFrame(FrameEventArgs __args) {
         base.OnUpdateFrame(__args);
-
-        if (!Osmium.IsRunning) return;
         
         Osmium.DeltaTime = __args.Time;
         foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(2);
@@ -61,8 +55,6 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     /// <remarks> If you have Drawing logic you should put it in here!</remarks>
     protected override void OnRenderFrame(FrameEventArgs __args) {
         base.OnRenderFrame(__args);
-        
-        if (!Osmium.IsRunning) return;
         
         Osmium.DeltaTime = __args.Time;
         foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(3);

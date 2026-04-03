@@ -4,16 +4,20 @@
         <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>OsmiumNucleus</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
-
+        
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>OsmiumNucleus</PackageId>
-        <Version>1.1.2</Version>
+        <Version>1.2.3</Version>
         <Authors>Avery Norris</Authors>
         <Description>The sourcing class for the Osmium game framework!</Description>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="OpenTK" Version="5.0.0-pre.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="obj\" />
     </ItemGroup>
 
 </Project>

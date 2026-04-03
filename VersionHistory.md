@@ -103,3 +103,27 @@ Small bugfix! Is initialized wasn't set by editor initialize!
 ---
 
 Documentation rework! And small optimizations
+
+# V1.2B.1
+
+### April 3 2026
+
+---
+
+1.2 is all about Optimizing Osmium! This first patch uses a SortedDictionary<> to index priority and prevent redundant sorting
+
+# V1.2B.2
+
+### April 3 2026
+
+---
+
+Using FrozenDictionary<> instead of a normal Dictionary to store Type delegates
+
+# V1.2B.3
+
+### April 3 2026
+
+---
+
+Using Hashset<> in the Sorted Dictionary for Component priorities. And changed the iterator in the dictionary for ChainEvent.

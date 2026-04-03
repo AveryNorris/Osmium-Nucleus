@@ -26,7 +26,7 @@ public static class Debug
     //Whether to debug errors at all
     public static bool DebugErrors { get; set; } = true;
     //Whether to write to console
-    public static bool WriteToConsole { get; set; } = false;
+    public static bool WriteToConsole { get; set; } = true;
     //Whether to write to file
     public static bool WriteToFile { get; set; } = false;
     

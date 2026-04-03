@@ -1,4 +1,7 @@
+using System.Collections.Frozen;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+
 
 
 namespace OsmiumNucleus;
@@ -14,7 +17,7 @@ public static class Osmium
     
     
     /// <summary> Current Version of Osmium </summary>
-    public const string Version = "1.1.2";
+    public const string Version = "1.2B.3";
 
 
 
@@ -130,7 +133,7 @@ public static class Osmium
     /// If you do want to use it, use the EditorInitialize() EditorRun() and EditorClose() instead of the traditional methods!</remarks>
     [MarkerAttributes.EditorPipeline]
     public static void VirtualInitialize(IEnumerable<Assembly> __assemblies) {
-        EventManager._TypeAssociatedTimeEvents.Clear();
+        EventManager._TypeAssociatedTimeEvents = FrozenDictionary<Type, Action<Component>[]>.Empty;
         IsInitialized = true;
         
         EventManager.ResolveAllModules(__assemblies);
