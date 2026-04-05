@@ -17,7 +17,7 @@ public static class Osmium
     
     
     /// <summary> Current Version of Osmium </summary>
-    public const string Version = "1.2B.3";
+    public const string Version = "1.3";
 
 
 

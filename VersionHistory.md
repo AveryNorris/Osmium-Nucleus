@@ -127,3 +127,11 @@ Using FrozenDictionary<> instead of a normal Dictionary to store Type delegates
 ---
 
 Using Hashset<> in the Sorted Dictionary for Component priorities. And changed the iterator in the dictionary for ChainEvent.
+
+# V1.3
+
+### April 4 2026
+
+---
+
+Major Bugfixes, so many I forgot.

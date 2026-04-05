@@ -9,7 +9,7 @@
         
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>OsmiumNucleus</PackageId>
-        <Version>1.2.3</Version>
+        <Version>1.3</Version>
         <Authors>Avery Norris</Authors>
         <Description>The sourcing class for the Osmium game framework!</Description>
     </PropertyGroup>
