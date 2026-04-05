@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <AssemblyName>Osmium-Nucleus</AssemblyName>
+
         <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>OsmiumNucleus</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -13,6 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.15" />
     </ItemGroup>
 

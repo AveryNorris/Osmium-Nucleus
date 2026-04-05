@@ -55,7 +55,7 @@ public sealed class Context() : GameWindow(GameWindowSettings.Default, new Nativ
     /// <remarks> If you have Drawing logic you should put it in here!</remarks>
     protected override void OnRenderFrame(FrameEventArgs __args) {
         base.OnRenderFrame(__args);
-        
+            
         Osmium.DeltaTime = __args.Time;
         foreach(Scene scene in Osmium._scenes) if(scene.Enabled) scene.ChainEvent(3);
     }

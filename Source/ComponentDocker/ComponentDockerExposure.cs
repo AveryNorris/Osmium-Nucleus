@@ -48,7 +48,7 @@ public abstract partial class ComponentDocker
 
     /// <summary> Gets all components of a given type</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)] 
-    public ICollection<Component> GetAll() => _components;
+    public ICollection<Component> GetAll() => [.._components];
 
     /// <summary> Finds the first component with a given Type</summary>
     [MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.VeryLow), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.O1)]

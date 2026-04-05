@@ -21,7 +21,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     /// <summary> Core of the Docker, holds all the Components.</summary>
     [MarkerAttributes.UnsafeInternal] internal readonly List<Component> _components = [];
     /// <summary> Holds all the Components sorted by priority. This optimizes priority changes</summary>
-    [MarkerAttributes.UnsafeInternal] internal readonly SortedDictionary<int, HashSet<Component>> _componentPriorityDictionary = [];
+    [MarkerAttributes.UnsafeInternal] internal readonly SortedDictionary<int, HashSet<Component>> _componentPriorityDictionary = new SortedDictionary<int, HashSet<Component>>(_prioritySorter);
     /// <summary> Holds a list of Components at each of their types. This optimizes Get&lt;Type&gt; to O(1) </summary>
     [MarkerAttributes.UnsafeInternal] internal readonly Dictionary<Type, HashSet<Component>> _componentTypeDictionary = new();
     /// <summary> Stores a Component in a list at each of their tags. This optimizes Get(string tag) to O(1)</summary>
@@ -30,10 +30,12 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     
     
     /// <summary> Algorithm for how Components are sorted via Priority </summary>
-    internal static readonly Comparer<Component> _prioritySorter = Comparer<Component>.Create((a, b) => {
-        int result = b.Priority.CompareTo(a.Priority); 
-        return (result != 0) ? result : a.GetHashCode().CompareTo(b.GetHashCode());
+    internal static readonly Comparer<int> _prioritySorter = Comparer<int>.Create((a, b) => {
+        int result = b.CompareTo(a);
+        return result != 0 ? result : 0;
     });
+    
+    
 
     /// <summary> Resorts the component list to order of priority, assumes that old and new priority are different! </summary>
     [MarkerAttributes.UnsafeInternal]
@@ -45,7 +47,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
             else _componentPriorityDictionary.Remove(__oldPriority);
         }
 
-        if (!_componentPriorityDictionary.TryAdd(__component.Priority, [__component])) _componentPriorityDictionary[__component.Priority].Add(__component);
+        if (!_componentPriorityDictionary.TryAdd(__newPriority, [__component])) _componentPriorityDictionary[__newPriority].Add(__component);
     }
     
     
@@ -59,8 +61,8 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     
     /// <summary> All children and children of children until the bottom of the scene. Uses Breadth First Search. </summary>
     [MarkerAttributes.CalculatedProperty, MarkerAttributes.Expense(MarkerAttributes.Expense.ExpenseLevel.High), MarkerAttributes.Complexity(MarkerAttributes.Complexity.TimeComplexity.ON)]
-    public IEnumerable<Component> AllChildren => GetAllChildren();
-    public IEnumerable<Component> GetAllChildren() {
+    public IList<Component> AllChildren => GetAllChildren();
+    public IList<Component> GetAllChildren() {
         List<Component> returnValue = [];
         Queue<Component> queue = new(_components);
         while (queue.Count > 0) {
@@ -97,7 +99,7 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
     //Enumerators that allow convenient foreach loops. Uses ToList() to make a new snapshot of the hashset and allow hashset modification in the loop.
     IEnumerator IEnumerable.GetEnumerator() { return  GetEnumerator(); }
 
-    public IEnumerator<Component> GetEnumerator() { return _components.GetEnumerator(); }
+    public IEnumerator<Component> GetEnumerator() { return _components.ToList().GetEnumerator(); }
     
     
     
@@ -144,7 +146,11 @@ public abstract partial class ComponentDocker : IEnumerable<Component>
             else _componentPriorityDictionary.Remove(__component.Priority);
         }
         
-        if(_componentTypeDictionary.TryGetValue(Type, out HashSet<Component> value)) value.Remove(__component);
+        if (_componentTypeDictionary.TryGetValue(Type, out HashSet<Component>? componentsOfType)) {
+            //if there is only one item or less in the list, just remove it from the dictionary as a whole since the priority of this has now changed.
+            if (componentsOfType.Count > 1) componentsOfType.Remove(__component);
+            else _componentTypeDictionary.Remove(Type);
+        }
         
         foreach (string tag in __component._tags) UnhashTaggedComponent(tag, __component);
     }

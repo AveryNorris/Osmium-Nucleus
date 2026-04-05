@@ -13,7 +13,7 @@ namespace OsmiumNucleus;
 #nullable enable
 public static class Osmium
 {
-
+    
     
     
     /// <summary> Current Version of Osmium </summary>
@@ -22,7 +22,7 @@ public static class Osmium
 
 
     /// <summary> Bottom class of Osmium. Contains the OpenTK Instance. </summary>
-    public static Context? Context { get; private set; }
+    public static Context? Context { get; internal set; }
 
     
     
@@ -33,11 +33,11 @@ public static class Osmium
 
     
     /// <summary> Displays if Osmium has Started or not. </summary>
-    public static bool IsInitialized { get; private set; }
+    public static bool IsInitialized { get; internal set; }
     /// <summary> Displays if the update loop is active.</summary>
-    public static bool IsRunning { get; private set; }
+    public static bool IsRunning { get; internal set; }
     /// <summary> Displays if Osmium has closed or not. </summary>
-    public static bool IsClosed { get; private set; }
+    public static bool IsClosed { get; internal set; }
     
     
     

@@ -12,6 +12,8 @@ public abstract partial class ComponentDocker
         if(__componentDocker == null) { Debug.LogError("Docker cannot be null!"); return; }
         if(__componentDocker == this) { Debug.LogError("A Component cannot move to a Docker it already belongs to!"); return; }
         if(!this.Contains(__component)) { Debug.LogError("The Docker you are calling does not own this Component!"); return; }
+        if(__component == __componentDocker)  { Debug.LogError("You cannot move a Component into itself!"); return; }
+        if(__component.AllChildren.Contains(__componentDocker)) { Debug.LogError("The Component is a parent of the Docker it is trying to move to!"); return; }
         
         RemoveComponentFromLists(__component);
         __componentDocker.AddComponentToLists(__component);
